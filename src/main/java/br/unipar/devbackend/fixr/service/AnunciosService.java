@@ -43,24 +43,21 @@ public class AnunciosService {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Anúncio não encontrado"));
     }
 
-    public Anuncios atualizar(Long id, Anuncios anuncioAtualizado){
+    public Anuncios atualizar(Long id, AnuncioDTO anuncioDTOAtualizado){
         return repository.findById(id).map(anuncios -> {
-            anuncios.setCliente(anuncioAtualizado.getCliente());
-            anuncios.setTitulo(anuncioAtualizado.getTitulo());
-            anuncios.setDescricao(anuncioAtualizado.getDescricao());
-            anuncios.setStatusAnuncio(anuncioAtualizado.getStatusAnuncio());
-            anuncios.setProfissao(anuncioAtualizado.getProfissao());
+
+            Cliente cliente = clienteRepository.getReferenceById(anuncioDTOAtualizado.idCliente());
+            anuncios.setCliente(cliente);
+
+            anuncios.setTitulo(anuncioDTOAtualizado.titulo());
+            anuncios.setDescricao(anuncioDTOAtualizado.descricao());
+            anuncios.setStatusAnuncio(anuncioDTOAtualizado.statusAnuncio());
+            anuncios.setProfissao(anuncioDTOAtualizado.profissao());
             return repository.save(anuncios);
         }).orElseThrow(() -> new RuntimeException("Anúncio não encontrado."));
     }
 
-
-
     public void apagarAnuncio(Long id){repository.deleteById(id);
     }
-
-
-
-
 
 }

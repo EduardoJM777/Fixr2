@@ -3,7 +3,6 @@ package br.unipar.devbackend.fixr.Controller;
 import br.unipar.devbackend.fixr.dto.AnuncioDTO;
 import br.unipar.devbackend.fixr.model.Anuncios;
 import br.unipar.devbackend.fixr.service.AnunciosService;
-import br.unipar.devbackend.fixr.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +19,13 @@ public class AnuncioController {
     }
 
     @PostMapping
-    public Anuncios salvar(@Valid @RequestBody AnuncioDTO anuncioDTO){
+    public Anuncios cadastrar(@Valid @RequestBody AnuncioDTO anuncioDTO){
         return anuncioservice.salvar(anuncioDTO);
     }
 
     @PutMapping("/{id}")
-    public Anuncios atualizar(@PathVariable Long id, @RequestBody Anuncios anuncios){
-        return anuncioservice.atualizar(id, anuncios);
+    public Anuncios atualizar(@PathVariable Long id, @RequestBody AnuncioDTO anuncioDTO){
+        return anuncioservice.atualizar(id, anuncioDTO);
     }
 
     @GetMapping
