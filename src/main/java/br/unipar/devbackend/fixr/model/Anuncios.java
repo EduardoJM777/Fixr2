@@ -18,7 +18,7 @@ public class Anuncios {
     private LocalDateTime dataPublicacao = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    private StatusAnuncio statusAnuncio;
+    private StatusAnuncio statusAnuncio = StatusAnuncio.PUBLICADO;
 
     @Enumerated(EnumType.STRING)
     private Profissao profissao;
