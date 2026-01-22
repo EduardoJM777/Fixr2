@@ -10,6 +10,6 @@ public enum Profissao {
     CONTADOR,
     ENCANADOR,
     METALURGICO,
-    NUTRICIONAISTA,
+    NUTRICIONISTA,
     OUTROS
 }
