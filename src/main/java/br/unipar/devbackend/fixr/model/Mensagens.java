@@ -14,7 +14,7 @@ public class Mensagens {
     private Integer id;
 
     private String texto;
-    private LocalDateTime enviadoEm;
+    private LocalDateTime enviadoEm = LocalDateTime.now();
 
     @ManyToOne
     private Chats chat;
