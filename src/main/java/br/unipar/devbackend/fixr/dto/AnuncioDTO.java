@@ -18,8 +18,6 @@ public record AnuncioDTO(
         @Size(max = 300)
         String descricao,
 
-        StatusAnuncio statusAnuncio,
-
         Profissao profissao,
 
         Long idCliente

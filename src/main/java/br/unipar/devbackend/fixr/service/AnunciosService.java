@@ -26,7 +26,6 @@ public class AnunciosService {
         Anuncios anuncios = new Anuncios();
         anuncios.setTitulo(anuncioDTO.titulo());
         anuncios.setDescricao(anuncioDTO.descricao());
-        anuncios.setStatusAnuncio(anuncioDTO.statusAnuncio());
         anuncios.setProfissao(anuncioDTO.profissao());
 
         Cliente cliente = clienteRepository.getReferenceById(anuncioDTO.idCliente());
@@ -51,7 +50,6 @@ public class AnunciosService {
 
             anuncios.setTitulo(anuncioDTOAtualizado.titulo());
             anuncios.setDescricao(anuncioDTOAtualizado.descricao());
-            anuncios.setStatusAnuncio(anuncioDTOAtualizado.statusAnuncio());
             anuncios.setProfissao(anuncioDTOAtualizado.profissao());
             return repository.save(anuncios);
         }).orElseThrow(() -> new RuntimeException("Anúncio não encontrado."));
