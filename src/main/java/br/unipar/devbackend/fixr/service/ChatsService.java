@@ -26,7 +26,7 @@ public class ChatsService {
         this.clienteRepository = clienteRepository;
     }
 
-    public Chats criar(ChatsDTO chatsDTO){
+    public Chats cadastrar(ChatsDTO chatsDTO){
         Chats chats = new Chats();
 
         Prestador prestador = prestadorRepository.getReferenceById(chatsDTO.idPrestador());
@@ -42,7 +42,7 @@ public class ChatsService {
         return repository.findAll();
     }
 
-    public Chats listarPorId(Long id){
+    public Chats buscarPorId(Long id){
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Chat não encontrado"));
     }
 

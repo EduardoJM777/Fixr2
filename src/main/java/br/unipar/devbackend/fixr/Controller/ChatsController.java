@@ -21,7 +21,7 @@ public class ChatsController {
 
     @PostMapping
     public Chats cadastrar(@Valid @RequestBody ChatsDTO chatsDTO){
-        return chatsService.criar(chatsDTO);
+        return chatsService.cadastrar(chatsDTO);
     }
 
     @GetMapping
@@ -30,8 +30,8 @@ public class ChatsController {
     }
 
     @GetMapping("/{id}")
-    public Chats listarPorId(@PathVariable Long id){
-        return chatsService.listarPorId(id);
+    public Chats buscarPorId(@PathVariable Long id){
+        return chatsService.buscarPorId(id);
     }
 
     @PutMapping("/{id}")

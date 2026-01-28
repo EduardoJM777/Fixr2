@@ -18,7 +18,7 @@ public class PrestadorService {
         this.repository = prestadorRepository;
     }
 
-    public Prestador salvar(PrestadorDTO prestadorDTO){
+    public Prestador cadastrar(PrestadorDTO prestadorDTO){
         Prestador prestador = new Prestador();
         prestador.setNome(prestadorDTO.nome());
         prestador.setEmail(prestadorDTO.email());
@@ -43,7 +43,7 @@ public class PrestadorService {
         }).orElseThrow(() -> new RuntimeException("Erro."));
     }
 
-    public void apagar(Long id){
+    public void deletar(Long id){
         repository.deleteById(id);
     }
 

@@ -22,7 +22,7 @@ public class MensagensService {
         this.chatsRepository = chatsRepository;
     }
 
-    public Mensagens criar(MensagensDTO mensagensDTO){
+    public Mensagens cadastrar(MensagensDTO mensagensDTO){
         Mensagens mensagens = new Mensagens();
         mensagens.setTexto(mensagensDTO.texto());
 
@@ -36,7 +36,7 @@ public class MensagensService {
         return repository.findAll();
     }
 
-    public Mensagens listarPorId(Long id){
+    public Mensagens buscarPorId(Long id){
         return repository.findById(id).orElseThrow(()->new RuntimeException("Mensagem não encontrada"));
     }
 
