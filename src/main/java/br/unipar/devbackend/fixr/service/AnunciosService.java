@@ -22,7 +22,7 @@ public class AnunciosService {
         this.clienteRepository = clienteRepository;
     }
 
-    public Anuncios salvar(AnuncioDTO anuncioDTO){
+    public Anuncios cadastrar(AnuncioDTO anuncioDTO){
         Anuncios anuncios = new Anuncios();
         anuncios.setTitulo(anuncioDTO.titulo());
         anuncios.setDescricao(anuncioDTO.descricao());
@@ -55,7 +55,7 @@ public class AnunciosService {
         }).orElseThrow(() -> new RuntimeException("Anúncio não encontrado."));
     }
 
-    public void apagarAnuncio(Long id){repository.deleteById(id);
+    public void deletar(Long id){repository.deleteById(id);
     }
 
 }

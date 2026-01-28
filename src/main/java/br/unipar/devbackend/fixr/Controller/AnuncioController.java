@@ -20,7 +20,7 @@ public class AnuncioController {
 
     @PostMapping
     public Anuncios cadastrar(@Valid @RequestBody AnuncioDTO anuncioDTO){
-        return anuncioservice.salvar(anuncioDTO);
+        return anuncioservice.cadastrar(anuncioDTO);
     }
 
     @PutMapping("/{id}")
@@ -39,8 +39,8 @@ public class AnuncioController {
     }
 
     @DeleteMapping("/{id}")
-    public void apagarAnuncio(@PathVariable Long id){
-        anuncioservice.apagarAnuncio(id);
+    public void deletar(@PathVariable Long id){
+        anuncioservice.deletar(id);
     }
 
 

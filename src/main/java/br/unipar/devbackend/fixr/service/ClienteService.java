@@ -18,7 +18,7 @@ public class ClienteService {
         this.repository = repository;
     }
 
-    public Cliente salvar(ClienteDTO clienteDTO){
+    public Cliente cadastrar(ClienteDTO clienteDTO){
         Cliente cliente = new Cliente();
         cliente.setNome(clienteDTO.nome());
         cliente.setEmail(clienteDTO.email());
@@ -41,7 +41,7 @@ public class ClienteService {
         }).orElseThrow(() -> new RuntimeException("Erro"));
     }
 
-    public void apagar(Long id){
+    public void deletar(Long id){
         repository.deleteById(id);
     }
 
