@@ -15,8 +15,13 @@ public abstract class Usuario {
     private Integer id;
 
     private String nome;
+
+    @Column(unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String senhaHash;
+
     private LocalDateTime dataCadastro = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)

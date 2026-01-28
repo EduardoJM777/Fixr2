@@ -21,7 +21,7 @@ public class MensagensController {
 
     @PostMapping
     public Mensagens cadastrar(@Valid @RequestBody MensagensDTO mensagensDTO){
-        return mensagensService.criar(mensagensDTO);
+        return mensagensService.cadastrar(mensagensDTO);
     }
 
     @GetMapping
@@ -31,7 +31,7 @@ public class MensagensController {
 
     @GetMapping("/{id}")
     public Mensagens buscarPorId(@PathVariable Long id){
-        return mensagensService.listarPorId(id);
+        return mensagensService.buscarPorId(id);
     }
 
     @PutMapping("/{id}")

@@ -18,7 +18,7 @@
 //        this.repository = repository;
 //    }
 //
-//    public Usuario salvar(UsuarioDTO usuarioDTO){
+//    public Usuario cadastrar(UsuarioDTO usuarioDTO){
 //        Usuario usuario = new Usuario();
 //        usuario.setNome(usuarioDTO.nome());
 //        usuario.setEmail(usuarioDTO.email());
@@ -43,7 +43,7 @@
 //        }).orElseThrow(()-> new RuntimeException("Erro"));
 //    }
 //
-//    public void apagar(Long id){
+//    public void deletar(Long id){
 //        repository.deleteById(id);
 //    }
 //

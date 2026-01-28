@@ -21,7 +21,7 @@ public class ClienteController {
 
     @PostMapping
     public Cliente cadastrar(@Valid @RequestBody ClienteDTO clienteDTO){
-        return clienteService.salvar(clienteDTO);
+        return clienteService.cadastrar(clienteDTO);
     }
 
     @PutMapping("/{id}")
@@ -40,8 +40,8 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{id}")
-    public void apagarCliente(@PathVariable Long id){
-        clienteService.apagar(id);
+    public void deletar(@PathVariable Long id){
+        clienteService.deletar(id);
     }
 
 }

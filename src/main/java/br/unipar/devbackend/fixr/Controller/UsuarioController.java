@@ -21,7 +21,7 @@
 //
 //    @PostMapping
 //    public Usuario cadastrar(@Valid @RequestBody UsuarioDTO usuarioDTO){
-//        return usuarioService.salvar(usuarioDTO);
+//        return usuarioService.cadastrar(usuarioDTO);
 //    }
 //
 //    @PutMapping("/{id}")
@@ -35,8 +35,8 @@
 //    public Usuario buscarPorId(@PathVariable Long id){return usuarioService.buscarPorId(id);}
 //
 //    @DeleteMapping("/{id}")
-//    public void apagarUsuario(@PathVariable Long id){
-//        usuarioService.apagar(id);
+//    public void deletar(@PathVariable Long id){
+//        usuarioService.deletar(id);
 //    }
 //
 //}
