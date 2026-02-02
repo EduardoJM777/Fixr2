@@ -26,17 +26,17 @@ public class AcordosController {
         return acordosService.listar();
     }
 
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public Acordos buscarPorId(@PathVariable Long id){
         return acordosService.buscarPorId(id);
     }
 
-    @PutMapping("/id")
+    @PutMapping("/{id}")
     public Acordos atualizar(@PathVariable Long id, @RequestBody AcordosDTO acordosDTO) {
         return acordosService.atualizar(id, acordosDTO);
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id){
         acordosService.deletar(id);}
 

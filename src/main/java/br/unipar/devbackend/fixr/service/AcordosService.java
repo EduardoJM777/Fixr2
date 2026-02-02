@@ -45,6 +45,7 @@ public class AcordosService {
             Chats chats = chatsRepository.getReferenceById(acordosDTOAtualizado.idChats());
             acordos.setChats(chats);
 
+            acordos.setData_servico(acordosDTOAtualizado.data_servico());
             acordos.setValor(acordosDTOAtualizado.valor());
             acordos.setValor2(acordosDTOAtualizado.valor2());
             acordos.setStatusAcordo(acordosDTOAtualizado.statusAcordo());
