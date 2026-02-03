@@ -24,7 +24,7 @@ public class AnuncioController {
     }
 
     @PutMapping("/{id}")
-    public Anuncios atualizar(@PathVariable Long id, @RequestBody AnuncioDTO anuncioDTO){
+    public Anuncios atualizar(@PathVariable Long id, @Valid @RequestBody AnuncioDTO anuncioDTO){
         return anuncioservice.atualizar(id, anuncioDTO);
     }
 
