@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -15,7 +16,7 @@ public class Avaliacoes {
 
     private Double nota;
     private String comentario;
-    private LocalDate data;
+    private LocalDateTime data = LocalDateTime.now();
     private String sugest_melhoria;
 
     @ManyToOne
