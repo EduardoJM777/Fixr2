@@ -14,8 +14,12 @@ public record AvaliacoesDTO (
         @Size(max = 100)
         String sugest_melhoria,
 
+        @NotNull
+        @Positive
         Long idCliente,
 
+        @NotNull
+        @Positive
         Long idPrestador
 
 )

@@ -35,7 +35,7 @@ public class MensagensController {
     }
 
     @PutMapping("/{id}")
-    public Mensagens atualizar(@PathVariable Long id, @RequestBody MensagensDTO mensagensDTO){
+    public Mensagens atualizar(@PathVariable Long id, @Valid @RequestBody MensagensDTO mensagensDTO){
         return mensagensService.atualizar(id, mensagensDTO);
     }
 

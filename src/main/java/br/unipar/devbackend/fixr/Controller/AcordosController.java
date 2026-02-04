@@ -32,7 +32,7 @@ public class AcordosController {
     }
 
     @PutMapping("/{id}")
-    public Acordos atualizar(@PathVariable Long id, @RequestBody AcordosDTO acordosDTO) {
+    public Acordos atualizar(@PathVariable Long id, @Valid @RequestBody AcordosDTO acordosDTO) {
         return acordosService.atualizar(id, acordosDTO);
     }
 

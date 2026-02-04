@@ -25,7 +25,7 @@
 //    }
 //
 //    @PutMapping("/{id}")
-//    public Usuario atualizar(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO)
+//    public Usuario atualizar(@PathVariable Long id, @Valid @RequestBody UsuarioDTO usuarioDTO)
 //    { return usuarioService.atualizar(id, usuarioDTO);}
 //
 //    @GetMapping

@@ -19,6 +19,7 @@ public record PrestadorDTO(
         @Size(max=50)
         String email,
 
+        @NotNull
         Profissao profissao
 
 ) {

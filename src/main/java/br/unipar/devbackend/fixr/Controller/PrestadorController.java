@@ -25,7 +25,7 @@ public class PrestadorController {
     }
 
     @PutMapping("/{id}")
-    public Prestador atualizar(@PathVariable Long id, @RequestBody PrestadorDTO prestadorDTO){
+    public Prestador atualizar(@PathVariable Long id, @Valid @RequestBody PrestadorDTO prestadorDTO){
         return prestadorService.atualizar(id, prestadorDTO);
     }
 

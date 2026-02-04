@@ -35,7 +35,7 @@ public class ChatsController {
     }
 
     @PutMapping("/{id}")
-    public Chats atualizar(@PathVariable Long id, @RequestBody ChatsDTO chatsDTO){
+    public Chats atualizar(@PathVariable Long id, @Valid @RequestBody ChatsDTO chatsDTO){
         return chatsService.atualizar(id, chatsDTO);
     }
 

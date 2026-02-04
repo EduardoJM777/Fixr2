@@ -19,5 +19,6 @@ public record UsuarioDTO (
         @Size(max=50)
         String email,
 
+        @NotNull
         UserType userType)
 {}
