@@ -11,11 +11,9 @@ public record AcordosDTO (
 
      LocalDate data_servico,
 
-     @NotBlank
      @NotNull
      Double valor,
 
-     @NotBlank
      @NotNull
      Double valor2,
 
