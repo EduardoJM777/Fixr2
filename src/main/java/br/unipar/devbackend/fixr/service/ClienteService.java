@@ -1,8 +1,11 @@
 package br.unipar.devbackend.fixr.service;
 
 import br.unipar.devbackend.fixr.Repository.ClienteRepository;
+import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
+import br.unipar.devbackend.fixr.dto.LoginDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
+import br.unipar.devbackend.fixr.model.Prestador;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,20 @@ public class ClienteService {
         cliente.setNome(clienteDTO.nome());
         cliente.setEmail(clienteDTO.email());
         return repository.save(cliente);
+    }
+
+    public boolean login(LoginDTO dto) {
+        Cliente cliente = ClienteRepository.findByEmail(dto.getEmail());
+        if (cliente != null && cliente.getSenha().equals(dto.getSenha())) {
+            return true;
+        }
+
+        Prestador prestador = PrestadorRepository.findByEmail(dto.getEmail());
+        if (prestador != null && prestador.getSenha().equals(dto.getSenha())) {
+            return true;
+        }
+
+        return false;
     }
 
     public List<Cliente> listar(){
