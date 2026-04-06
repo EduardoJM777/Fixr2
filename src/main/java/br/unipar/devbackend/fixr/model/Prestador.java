@@ -4,17 +4,18 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+
 @Entity
-public class Prestador extends Usuario{
+public class Prestador {
 
-    @PrePersist
-    private void definirTipo(){
-        this.setUserType(UserType.PRESTADOR);
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Enumerated(EnumType.STRING)
+    private String nome;
+    private String email;
+
+    @ManyToOne
     private Profissao profissao;
 
 }

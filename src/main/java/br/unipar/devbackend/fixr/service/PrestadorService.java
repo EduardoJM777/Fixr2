@@ -1,8 +1,10 @@
 package br.unipar.devbackend.fixr.service;
 
 import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
+import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
 import br.unipar.devbackend.fixr.model.Prestador;
+import br.unipar.devbackend.fixr.model.Profissao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,17 +14,38 @@ import java.util.List;
 public class PrestadorService {
 
     private final PrestadorRepository repository;
+    private final ProfissaoRepository profissaoRepository;
+    private final ProfissaoService profissaoService;
 
-    @Autowired
-    private PrestadorService(PrestadorRepository prestadorRepository){
-        this.repository = prestadorRepository;
+    public PrestadorService(PrestadorRepository repository,
+                            ProfissaoRepository profissaoRepository,
+                            ProfissaoService profissaoService) {
+        this.repository = repository;
+        this.profissaoRepository = profissaoRepository;
+        this.profissaoService = profissaoService;
     }
 
-    public Prestador cadastrar(PrestadorDTO prestadorDTO){
+    public Prestador cadastrar(PrestadorDTO dto){
+
         Prestador prestador = new Prestador();
-        prestador.setNome(prestadorDTO.nome());
-        prestador.setEmail(prestadorDTO.email());
-        prestador.setProfissao(prestadorDTO.profissao());
+        prestador.setNome(dto.nome());
+        prestador.setEmail(dto.email());
+
+        // 🔥 REGRA PRINCIPAL
+        if(dto.profissao().equalsIgnoreCase("outro")){
+
+            Profissao nova = profissaoService.cadastrar(dto.novaProfissao());
+            prestador.setProfissao(nova);
+
+        } else {
+
+            Profissao existente = profissaoRepository
+                    .findByNome(dto.profissao())
+                    .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
+
+            prestador.setProfissao(existente);
+        }
+
         return repository.save(prestador);
     }
 
@@ -31,20 +54,33 @@ public class PrestadorService {
     }
 
     public Prestador buscarPorId(Long id){
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Prestador não encontrado."));
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prestador não encontrado."));
     }
 
-    public Prestador atualizar(Long id, PrestadorDTO prestadorDTOatualizado){
+    public Prestador atualizar(Long id, PrestadorDTO dto){
         return repository.findById(id).map(prestador -> {
-            prestador.setNome(prestadorDTOatualizado.nome());
-            prestador.setEmail(prestadorDTOatualizado.email());
-            prestador.setProfissao(prestadorDTOatualizado.profissao());
+
+            prestador.setNome(dto.nome());
+            prestador.setEmail(dto.email());
+
+            if(dto.profissao().equalsIgnoreCase("outro")){
+                Profissao nova = profissaoService.cadastrar(dto.novaProfissao());
+                prestador.setProfissao(nova);
+            } else {
+                Profissao existente = profissaoRepository
+                        .findByNome(dto.profissao())
+                        .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
+
+                prestador.setProfissao(existente);
+            }
+
             return repository.save(prestador);
+
         }).orElseThrow(() -> new RuntimeException("Erro."));
     }
 
     public void deletar(Long id){
         repository.deleteById(id);
     }
-
 }

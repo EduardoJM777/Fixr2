@@ -1,6 +1,5 @@
 package br.unipar.devbackend.fixr.dto;
 
-import br.unipar.devbackend.fixr.model.Profissao;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +19,8 @@ public record PrestadorDTO(
         String email,
 
         @NotNull
-        Profissao profissao
+        String profissao,
 
-) {
-}
+        ProfissaoDTO novaProfissao
+
+) {}

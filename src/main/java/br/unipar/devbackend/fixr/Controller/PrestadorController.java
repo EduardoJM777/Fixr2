@@ -20,13 +20,13 @@ public class PrestadorController {
     }
 
     @PostMapping
-    public Prestador cadastrar(@Valid @RequestBody PrestadorDTO prestadorDTO){
-        return prestadorService.cadastrar(prestadorDTO);
+    public Prestador cadastrar(@RequestBody PrestadorDTO dto){
+        return prestadorService.cadastrar(dto);
     }
 
     @PutMapping("/{id}")
-    public Prestador atualizar(@PathVariable Long id, @Valid @RequestBody PrestadorDTO prestadorDTO){
-        return prestadorService.atualizar(id, prestadorDTO);
+    public Prestador atualizar(@PathVariable Long id, @RequestBody PrestadorDTO dto){
+        return prestadorService.atualizar(id, dto);
     }
 
     @GetMapping
@@ -43,5 +43,4 @@ public class PrestadorController {
     public void deletar(@PathVariable Long id){
         prestadorService.deletar(id);
     }
-
 }

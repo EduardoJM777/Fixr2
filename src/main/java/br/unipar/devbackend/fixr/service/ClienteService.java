@@ -27,9 +27,10 @@ public class ClienteService {
         cliente.setEmail(clienteDTO.email());
         return repository.save(cliente);
     }
+    
 
     public boolean login(LoginDTO dto) {
-        Cliente cliente = ClienteRepository.findByEmail(dto.getEmail());
+        Cliente cliente = repository.findByEmail(dto.getEmail()).orElse(null);
         if (cliente != null && cliente.getSenha().equals(dto.getSenha())) {
             return true;
         }
