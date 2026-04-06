@@ -1,21 +1,21 @@
 package br.unipar.devbackend.fixr.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Entity
-public class Prestador {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String nome;
-    private String email;
+@Data
+public class Prestador extends Usuario {
 
     @ManyToOne
     private Profissao profissao;
+
+    @PrePersist
+    private void definirTipo(){
+        this.setUserType(UserType.PRESTADOR);
+    }
 
 }

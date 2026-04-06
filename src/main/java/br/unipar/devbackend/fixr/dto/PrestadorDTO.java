@@ -18,9 +18,6 @@ public record PrestadorDTO(
         @Size(max=50)
         String email,
 
-        @NotNull
-        String profissao,
-
-        ProfissaoDTO novaProfissao
+        Long profissaoId
 
 ) {}

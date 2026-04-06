@@ -2,7 +2,7 @@ package br.unipar.devbackend.fixr.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
+import br.unipar.devbackend.fixr.model.Profissao;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,7 +20,7 @@ public class Anuncios {
     @Enumerated(EnumType.STRING)
     private StatusAnuncio statusAnuncio = StatusAnuncio.PUBLICADO;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
     private Profissao profissao;
 
     @ManyToOne

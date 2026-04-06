@@ -11,4 +11,6 @@ import javax.swing.text.html.Option;
 @Repository
 public interface PrestadorRepository extends JpaRepository<Prestador, Long> {
     Optional<Profissao> findByNome(String nome);
+    Optional<Prestador> findByEmail(String email);
+
 }

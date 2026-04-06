@@ -28,7 +28,7 @@ public class ClienteController {
 
     @PostMapping("/login")
     public ResponseEntity<Boolean> login(@RequestBody LoginDTO dto) {
-        return ResponseEntity.ok(service.login(dto));
+        return ResponseEntity.ok(clienteService.login(dto));
     }
 
     @PutMapping("/{id}")
