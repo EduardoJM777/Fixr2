@@ -6,6 +6,8 @@ import br.unipar.devbackend.fixr.service.ProfissaoService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/profissao")
 @CrossOrigin(origins = "*")
@@ -20,5 +22,10 @@ public class ProfissaoController {
     @PostMapping
     public Profissao cadastrar(@Valid @RequestBody ProfissaoDTO dto){
         return service.cadastrar(dto);
+    }
+
+    @GetMapping
+    public List<Profissao> findAll(){
+        return service.findAll();
     }
 }

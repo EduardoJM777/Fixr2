@@ -22,7 +22,7 @@ public class PrestadorService {
         this.profissaoRepository = profissaoRepository;
     }
 
-    // ✅ CADASTRO
+
     public Prestador cadastrar(PrestadorDTO dto){
 
         Prestador prestador = new Prestador();
@@ -37,29 +37,25 @@ public class PrestadorService {
         return repository.save(prestador);
     }
 
-    // ✅ LOGIN (somente prestador)
     public boolean login(LoginDTO dto){
         Prestador prestador = repository.findByEmail(dto.getEmail()).orElse(null);
 
         if (prestador != null && prestador.getSenhaHash().equals(dto.getSenha())) {
             return true;
         }
-
         return false;
     }
 
-    // ✅ LISTAR
+
     public List<Prestador> listar(){
         return repository.findAll();
     }
 
-    // ✅ BUSCAR POR ID
     public Prestador buscarPorId(Long id){
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prestador não encontrado."));
     }
 
-    // ✅ ATUALIZAR
     public Prestador atualizar(Long id, PrestadorDTO dto){
         return repository.findById(id).map(prestador -> {
 
@@ -76,7 +72,7 @@ public class PrestadorService {
         }).orElseThrow(() -> new RuntimeException("Erro ao atualizar."));
     }
 
-    // ✅ DELETAR
+
     public void deletar(Long id){
         repository.deleteById(id);
     }
