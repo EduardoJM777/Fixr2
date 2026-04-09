@@ -29,10 +29,10 @@ public class PrestadorService {
         prestador.setNome(dto.nome());
         prestador.setEmail(dto.email());
 
-        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
-                .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
-
-        prestador.setProfissao(profissao);
+//        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
+//                .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
+//
+//        prestador.setProfissao(profissao);
 
         return repository.save(prestador);
     }
@@ -62,10 +62,10 @@ public class PrestadorService {
             prestador.setNome(dto.nome());
             prestador.setEmail(dto.email());
 
-            Profissao profissao = profissaoRepository.findById(dto.profissaoId())
-                    .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
-
-            prestador.setProfissao(profissao);
+//            Profissao profissao = profissaoRepository.findById(dto.profissaoId())
+//                    .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
+//
+//            prestador.setProfissao(profissao);
 
             return repository.save(prestador);
 
