@@ -1,11 +1,9 @@
 package br.unipar.devbackend.fixr.service;
 
 import br.unipar.devbackend.fixr.Repository.ClienteRepository;
-import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
 import br.unipar.devbackend.fixr.dto.LoginDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
-import br.unipar.devbackend.fixr.model.Prestador;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +24,7 @@ public class ClienteService {
         cliente.setNome(clienteDTO.nome());
         cliente.setEmail(clienteDTO.email());
         cliente.setDataNascimento(clienteDTO.dataNascimento());
+        cliente.setTelefone(clienteDTO.telefone());
         return repository.save(cliente);
     }
 
@@ -51,6 +50,7 @@ public class ClienteService {
             cliente.setNome(clienteDTOAtualizado.nome());
             cliente.setEmail(clienteDTOAtualizado.email());
             cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
+            cliente.setTelefone(clienteDTOAtualizado.telefone());
             return repository.save(cliente);
         }).orElseThrow(() -> new RuntimeException("Erro"));
     }

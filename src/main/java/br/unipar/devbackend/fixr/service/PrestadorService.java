@@ -6,7 +6,6 @@ import br.unipar.devbackend.fixr.dto.LoginDTO;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
 import br.unipar.devbackend.fixr.model.Prestador;
 import br.unipar.devbackend.fixr.model.Profissao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -29,6 +28,7 @@ public class PrestadorService {
         prestador.setNome(dto.nome());
         prestador.setEmail(dto.email());
         prestador.setDataNascimento(dto.dataNascimento());
+        prestador.setTelefone(dto.telefone());
 
 //        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
 //                .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
@@ -63,6 +63,7 @@ public class PrestadorService {
             prestador.setNome(dto.nome());
             prestador.setEmail(dto.email());
             prestador.setDataNascimento(dto.dataNascimento());
+            prestador.setTelefone(dto.telefone());
 
 //            Profissao profissao = profissaoRepository.findById(dto.profissaoId())
 //                    .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));

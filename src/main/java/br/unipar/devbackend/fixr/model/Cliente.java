@@ -3,8 +3,6 @@ package br.unipar.devbackend.fixr.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 
 @Entity

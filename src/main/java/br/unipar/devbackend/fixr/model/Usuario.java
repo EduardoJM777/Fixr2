@@ -28,6 +28,8 @@ public abstract class Usuario {
 
     private LocalDate dataNascimento;
 
+    private String telefone;
+
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
