@@ -24,6 +24,7 @@ public class ClienteService {
         cliente.setNome(clienteDTO.nome());
         cliente.setEmail(clienteDTO.email());
         cliente.setDataNascimento(clienteDTO.dataNascimento());
+        cliente.setSenhaHash(clienteDTO.senha());
         cliente.setTelefone(clienteDTO.telefone());
         return repository.save(cliente);
     }
@@ -50,6 +51,7 @@ public class ClienteService {
             cliente.setNome(clienteDTOAtualizado.nome());
             cliente.setEmail(clienteDTOAtualizado.email());
             cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
+            cliente.setSenhaHash(clienteDTOAtualizado.senha());
             cliente.setTelefone(clienteDTOAtualizado.telefone());
             return repository.save(cliente);
         }).orElseThrow(() -> new RuntimeException("Erro"));

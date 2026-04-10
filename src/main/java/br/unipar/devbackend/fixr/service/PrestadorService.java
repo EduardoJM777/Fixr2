@@ -28,6 +28,7 @@ public class PrestadorService {
         prestador.setNome(dto.nome());
         prestador.setEmail(dto.email());
         prestador.setDataNascimento(dto.dataNascimento());
+        prestador.setSenhaHash(dto.senha());
         prestador.setTelefone(dto.telefone());
 
 //        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
@@ -63,6 +64,7 @@ public class PrestadorService {
             prestador.setNome(dto.nome());
             prestador.setEmail(dto.email());
             prestador.setDataNascimento(dto.dataNascimento());
+            prestador.setSenhaHash(dto.senha());
             prestador.setTelefone(dto.telefone());
 
 //            Profissao profissao = profissaoRepository.findById(dto.profissaoId())

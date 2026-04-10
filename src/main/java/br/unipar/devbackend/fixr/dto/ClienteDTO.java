@@ -22,6 +22,8 @@ public record ClienteDTO(
 
         LocalDate dataNascimento,
 
+        String senha,
+
         String telefone
 
 ) {}

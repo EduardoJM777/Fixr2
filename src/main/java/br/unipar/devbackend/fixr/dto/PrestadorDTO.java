@@ -22,6 +22,8 @@ public record PrestadorDTO(
 
         LocalDate dataNascimento,
 
+        String senha,
+
         String telefone
 
 //        Long profissaoId
