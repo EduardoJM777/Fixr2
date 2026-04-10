@@ -28,6 +28,7 @@ public class PrestadorService {
         Prestador prestador = new Prestador();
         prestador.setNome(dto.nome());
         prestador.setEmail(dto.email());
+        prestador.setDataNascimento(dto.dataNascimento());
 
 //        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
 //                .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
@@ -61,6 +62,7 @@ public class PrestadorService {
 
             prestador.setNome(dto.nome());
             prestador.setEmail(dto.email());
+            prestador.setDataNascimento(dto.dataNascimento());
 
 //            Profissao profissao = profissaoRepository.findById(dto.profissaoId())
 //                    .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));

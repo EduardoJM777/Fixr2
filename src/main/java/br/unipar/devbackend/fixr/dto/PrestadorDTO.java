@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
+
 public record PrestadorDTO(
 
         @NotBlank
@@ -16,7 +18,9 @@ public record PrestadorDTO(
         @NotBlank
         @NotNull
         @Size(max=50)
-        String email
+        String email,
+
+        LocalDate dataNascimento
 
 //        Long profissaoId
 

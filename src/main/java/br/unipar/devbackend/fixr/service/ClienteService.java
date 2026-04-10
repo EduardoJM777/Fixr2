@@ -25,6 +25,7 @@ public class ClienteService {
         Cliente cliente = new Cliente();
         cliente.setNome(clienteDTO.nome());
         cliente.setEmail(clienteDTO.email());
+        cliente.setDataNascimento(clienteDTO.dataNascimento());
         return repository.save(cliente);
     }
 
@@ -49,6 +50,7 @@ public class ClienteService {
         return repository.findById(id).map(cliente -> {
             cliente.setNome(clienteDTOAtualizado.nome());
             cliente.setEmail(clienteDTOAtualizado.email());
+            cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
             return repository.save(cliente);
         }).orElseThrow(() -> new RuntimeException("Erro"));
     }
