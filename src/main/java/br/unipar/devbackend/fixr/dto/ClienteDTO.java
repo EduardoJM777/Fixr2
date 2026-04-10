@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
+
 public record ClienteDTO(
 
         @NotBlank
@@ -16,6 +18,8 @@ public record ClienteDTO(
         @NotBlank
         @NotNull
         @Size(max=50)
-        String email
+        String email,
+
+        LocalDate dataNascimento
 
 ) {}
