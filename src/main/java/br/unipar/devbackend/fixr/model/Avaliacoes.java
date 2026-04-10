@@ -3,7 +3,6 @@ package br.unipar.devbackend.fixr.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data

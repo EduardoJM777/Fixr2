@@ -20,12 +20,12 @@ public class PrestadorController {
     }
 
     @PostMapping
-    public Prestador cadastrar(@RequestBody PrestadorDTO dto){
+    public Prestador cadastrar(@Valid @RequestBody PrestadorDTO dto){
         return prestadorService.cadastrar(dto);
     }
 
     @PutMapping("/{id}")
-    public Prestador atualizar(@PathVariable Long id, @RequestBody PrestadorDTO dto){
+    public Prestador atualizar(@PathVariable Long id, @Valid @RequestBody PrestadorDTO dto){
         return prestadorService.atualizar(id, dto);
     }
 

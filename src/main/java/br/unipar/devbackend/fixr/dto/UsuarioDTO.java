@@ -23,6 +23,8 @@ public record UsuarioDTO (
 
         LocalDate dataNascimento,
 
+        String telefone,
+
         @NotNull
         UserType userType)
 {}
