@@ -4,6 +4,7 @@ import br.unipar.devbackend.fixr.Repository.ClienteRepository;
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
 import br.unipar.devbackend.fixr.dto.LoginDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +59,13 @@ public class ClienteService {
     }
 
     public void deletar(Long id){
-        repository.deleteById(id);
+
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+
+        cliente.setAtivo(false);
+
+        repository.save(cliente);
     }
 
 }

@@ -7,6 +7,7 @@ import br.unipar.devbackend.fixr.dto.AvaliacoesDTO;
 import br.unipar.devbackend.fixr.model.Avaliacoes;
 import br.unipar.devbackend.fixr.model.Cliente;
 import br.unipar.devbackend.fixr.model.Prestador;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,7 +69,13 @@ public class AvaliacoesService {
     }
 
     public void deletar(Long id){
-        repository.deleteById(id);
+
+        Avaliacoes avaliacoes = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Avaliacao não encontrada"));
+
+        avaliacoes.setAtivo(false);
+
+        repository.save(avaliacoes);
     }
 
 }

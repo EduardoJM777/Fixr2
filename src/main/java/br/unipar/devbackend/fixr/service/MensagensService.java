@@ -5,6 +5,7 @@ import br.unipar.devbackend.fixr.Repository.MensagensRepository;
 import br.unipar.devbackend.fixr.dto.MensagensDTO;
 import br.unipar.devbackend.fixr.model.Chats;
 import br.unipar.devbackend.fixr.model.Mensagens;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,13 @@ public class MensagensService {
     }
 
     public void deletar(Long id){
-        repository.deleteById(id);
+
+        Mensagens mensagens = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Mensagem não encontrada"));
+
+        mensagens.setAtivo(false);
+
+        repository.save(mensagens);
     }
 
     public Mensagens atualizar(Long id, MensagensDTO mensagensDTOatualizadas){

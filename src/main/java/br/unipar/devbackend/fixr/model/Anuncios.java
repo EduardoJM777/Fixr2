@@ -2,10 +2,13 @@ package br.unipar.devbackend.fixr.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLRestriction;
+
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@SQLRestriction("ativo = true")
 public class Anuncios {
 
     @Id
@@ -24,5 +27,7 @@ public class Anuncios {
 
     @ManyToOne
     private Cliente cliente;
+
+    private Boolean ativo = true;
 
 }

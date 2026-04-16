@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface PrestadorRepository extends JpaRepository<Prestador, Long> {
+
     Optional<Profissao> findByNome(String nome);
     Optional<Prestador> findByEmail(String email);
 
