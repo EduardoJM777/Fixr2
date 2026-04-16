@@ -2,11 +2,13 @@ package br.unipar.devbackend.fixr.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@SQLRestriction("ativo = true")
 public class Chats {
 
     @Id
@@ -20,5 +22,7 @@ public class Chats {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Cliente cliente;
+
+    private Boolean ativo = true;
 
 }

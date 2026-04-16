@@ -7,6 +7,7 @@ import br.unipar.devbackend.fixr.dto.ChatsDTO;
 import br.unipar.devbackend.fixr.model.Chats;
 import br.unipar.devbackend.fixr.model.Cliente;
 import br.unipar.devbackend.fixr.model.Prestador;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,13 @@ public class ChatsService {
     }
 
     public void deletar(Long id){
-        repository.deleteById(id);
+
+        Chats chats = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Chat não encontrado"));
+
+        chats.setAtivo(false);
+
+        repository.save(chats);
     }
 
     public Chats atualizar(Long id, ChatsDTO chatsDTOatualizado){

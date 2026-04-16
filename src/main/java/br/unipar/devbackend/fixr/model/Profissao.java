@@ -6,10 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
+import org.hibernate.annotations.SQLRestriction;
 
 
 @Entity
 @Data
+@SQLRestriction("ativo = true")
 public class Profissao {
 
     @Id
@@ -18,4 +20,7 @@ public class Profissao {
 
     private String descricao;
     private String nome;
+
+    private Boolean ativo = true;
+
 }

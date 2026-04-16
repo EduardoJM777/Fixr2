@@ -5,6 +5,7 @@ import br.unipar.devbackend.fixr.Repository.ClienteRepository;
 import br.unipar.devbackend.fixr.dto.AnuncioDTO;
 import br.unipar.devbackend.fixr.model.Anuncios;
 import br.unipar.devbackend.fixr.model.Cliente;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,13 @@ public class AnunciosService {
         }).orElseThrow(() -> new RuntimeException("Anúncio não encontrado."));
     }
 
-    public void deletar(Long id){repository.deleteById(id);
+    public void deletar(Long id){
+        Anuncios anuncios = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Anuncio não encontrado"));
+
+        anuncios.setAtivo(false);
+
+        repository.save(anuncios);
     }
 
 }

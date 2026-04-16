@@ -2,6 +2,7 @@ package br.unipar.devbackend.fixr.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@SQLRestriction("ativo = true")
 //@table
 public abstract class Usuario {
 
@@ -32,5 +34,7 @@ public abstract class Usuario {
 
     @Enumerated(EnumType.STRING)
     private UserType userType;
+
+    private Boolean ativo = true;
 
 }

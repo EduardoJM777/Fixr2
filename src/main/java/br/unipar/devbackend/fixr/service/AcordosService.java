@@ -5,6 +5,7 @@ import br.unipar.devbackend.fixr.Repository.ChatsRepository;
 import br.unipar.devbackend.fixr.dto.AcordosDTO;
 import br.unipar.devbackend.fixr.model.Acordos;
 import br.unipar.devbackend.fixr.model.Chats;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,14 @@ public class AcordosService {
     public Acordos buscarPorId(Long id){return repository.findById(id).
             orElseThrow(()->new RuntimeException("Não encontrado"));}
 
-    public void deletar(Long id){repository.deleteById(id);}
+    public void deletar(Long id){
+        Acordos acordos = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Acordo não encontrado"));
+
+        acordos.setAtivo(false);
+
+        repository.save(acordos);
+    }
 
     public Acordos atualizar(Long id, AcordosDTO acordosDTOAtualizado) {
         return repository.findById(id).map(acordos -> {

@@ -6,6 +6,7 @@ import br.unipar.devbackend.fixr.dto.LoginDTO;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
 import br.unipar.devbackend.fixr.model.Prestador;
 import br.unipar.devbackend.fixr.model.Profissao;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -79,6 +80,12 @@ public class PrestadorService {
 
 
     public void deletar(Long id){
-        repository.deleteById(id);
+
+        Prestador prestador = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Prestador não encontrado"));
+
+        prestador.setAtivo(false);
+
+        repository.save(prestador);
     }
 }
