@@ -10,18 +10,13 @@ public record AnuncioDTO(
 
         @NotBlank
         @NotNull
-        @Size(max = 61)
-        String titulo,
-
-        @NotBlank
-        @NotNull
         @Size(max = 300)
         String descricao,
 
         @NotNull
-        Profissao profissao,
+        Long idProfissao,
 
-        @NotNull
+
         @Positive
         Long idCliente
 

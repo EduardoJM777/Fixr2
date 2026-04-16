@@ -20,6 +20,8 @@ public record PrestadorDTO(
         @Size(max=50)
         String email,
 
+        String senha,
+
         LocalDate dataNascimento,
 
         String telefone

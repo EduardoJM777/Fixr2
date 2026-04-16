@@ -25,6 +25,7 @@ public class ClienteService {
         cliente.setEmail(clienteDTO.email());
         cliente.setDataNascimento(clienteDTO.dataNascimento());
         cliente.setTelefone(clienteDTO.telefone());
+        cliente.setSenhaHash(clienteDTO.senha());
         return repository.save(cliente);
     }
 
@@ -49,6 +50,7 @@ public class ClienteService {
         return repository.findById(id).map(cliente -> {
             cliente.setNome(clienteDTOAtualizado.nome());
             cliente.setEmail(clienteDTOAtualizado.email());
+            cliente.setSenhaHash(clienteDTOAtualizado.senha());
             cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
             cliente.setTelefone(clienteDTOAtualizado.telefone());
             return repository.save(cliente);

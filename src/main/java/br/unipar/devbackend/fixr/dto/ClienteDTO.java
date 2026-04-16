@@ -20,6 +20,8 @@ public record ClienteDTO(
         @Size(max=50)
         String email,
 
+        String senha,
+
         LocalDate dataNascimento,
 
         String telefone
