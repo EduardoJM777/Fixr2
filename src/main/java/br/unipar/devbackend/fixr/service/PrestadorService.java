@@ -2,10 +2,8 @@ package br.unipar.devbackend.fixr.service;
 
 import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
 import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
-import br.unipar.devbackend.fixr.dto.LoginDTO;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
 import br.unipar.devbackend.fixr.model.Prestador;
-import br.unipar.devbackend.fixr.model.Profissao;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -39,16 +37,6 @@ public class PrestadorService {
 
         return repository.save(prestador);
     }
-
-    public boolean login(LoginDTO dto){
-        Prestador prestador = repository.findByEmail(dto.getEmail()).orElse(null);
-
-        if (prestador != null && prestador.getSenhaHash().equals(dto.getSenha())) {
-            return true;
-        }
-        return false;
-    }
-
 
     public List<Prestador> listar(){
         return repository.findAll();
@@ -88,4 +76,5 @@ public class PrestadorService {
 
         repository.save(prestador);
     }
+
 }

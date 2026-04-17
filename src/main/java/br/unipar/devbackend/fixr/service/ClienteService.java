@@ -2,7 +2,6 @@ package br.unipar.devbackend.fixr.service;
 
 import br.unipar.devbackend.fixr.Repository.ClienteRepository;
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
-import br.unipar.devbackend.fixr.dto.LoginDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +27,6 @@ public class ClienteService {
         cliente.setSenhaHash(clienteDTO.senha());
         cliente.setTelefone(clienteDTO.telefone());
         return repository.save(cliente);
-    }
-
-
-    public boolean login(LoginDTO dto) {
-        Cliente cliente = repository.findByEmail(dto.getEmail()).orElse(null);
-        if (cliente != null && cliente.getSenhaHash().equals(dto.getSenha())) {
-            return true;
-        }
-        return false;
     }
 
     public List<Cliente> listar(){
