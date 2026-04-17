@@ -4,6 +4,7 @@ import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
 import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
 import br.unipar.devbackend.fixr.model.Prestador;
+import br.unipar.devbackend.fixr.model.Profissao;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,10 +35,10 @@ public class PrestadorService {
         prestador.setSenhaHash(passwordEncoder.encode(dto.senha()));
         prestador.setTelefone(dto.telefone());
 
-//        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
-//                .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
-//
-//        prestador.setProfissao(profissao);
+        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
+                .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
+
+        prestador.setProfissao(profissao);
 
         return repository.save(prestador);
     }
@@ -60,10 +61,10 @@ public class PrestadorService {
             prestador.setSenhaHash(passwordEncoder.encode(dto.senha()));
             prestador.setTelefone(dto.telefone());
 
-//            Profissao profissao = profissaoRepository.findById(dto.profissaoId())
-//                    .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
-//
-//            prestador.setProfissao(profissao);
+            Profissao profissao = profissaoRepository.findById(dto.profissaoId())
+                    .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
+
+            prestador.setProfissao(profissao);
 
             return repository.save(prestador);
 

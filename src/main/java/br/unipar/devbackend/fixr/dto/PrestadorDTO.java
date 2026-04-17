@@ -24,8 +24,8 @@ public record PrestadorDTO(
 
         String senha,
 
-        String telefone
+        String telefone,
 
-//        Long profissaoId
+        Long profissaoId
 
 ) {}
