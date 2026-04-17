@@ -5,6 +5,7 @@ import br.unipar.devbackend.fixr.dto.ClienteDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,10 +14,13 @@ import java.util.List;
 public class ClienteService {
 
     private final ClienteRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ClienteService(ClienteRepository repository){
+    public ClienteService(ClienteRepository repository,
+                          PasswordEncoder passwordEncoder){
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Cliente cadastrar(ClienteDTO clienteDTO){
@@ -24,7 +28,7 @@ public class ClienteService {
         cliente.setNome(clienteDTO.nome());
         cliente.setEmail(clienteDTO.email());
         cliente.setDataNascimento(clienteDTO.dataNascimento());
-        cliente.setSenhaHash(clienteDTO.senha());
+        cliente.setSenhaHash(passwordEncoder.encode(clienteDTO.senha()));
         cliente.setTelefone(clienteDTO.telefone());
         return repository.save(cliente);
     }
@@ -42,7 +46,7 @@ public class ClienteService {
             cliente.setNome(clienteDTOAtualizado.nome());
             cliente.setEmail(clienteDTOAtualizado.email());
             cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
-            cliente.setSenhaHash(clienteDTOAtualizado.senha());
+            cliente.setSenhaHash(passwordEncoder.encode(clienteDTOAtualizado.senha()));
             cliente.setTelefone(clienteDTOAtualizado.telefone());
             return repository.save(cliente);
         }).orElseThrow(() -> new RuntimeException("Erro"));

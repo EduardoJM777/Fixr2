@@ -11,7 +11,13 @@ import java.util.Optional;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
-    @Query(value = "SELECT * FROM cliente WHERE email = :email", nativeQuery = true)
+    @Query(value = """
+        SELECT u.id, u.nome, u.email, u.senha_hash, u.data_cadastro,
+               u.data_nascimento, u.telefone, u.user_type, u.ativo
+        FROM cliente c
+        INNER JOIN usuario u ON c.id = u.id
+        WHERE u.email = :email        
+        """, nativeQuery = true)
     Optional<Cliente> findByEmail(@Param("email") String email);
 
 }
