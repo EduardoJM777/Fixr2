@@ -2,11 +2,10 @@ package br.unipar.devbackend.fixr.service;
 
 import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
 import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
-import br.unipar.devbackend.fixr.dto.LoginDTO;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
 import br.unipar.devbackend.fixr.model.Prestador;
-import br.unipar.devbackend.fixr.model.Profissao;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -15,11 +14,14 @@ public class PrestadorService {
 
     private final PrestadorRepository repository;
     private final ProfissaoRepository profissaoRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public PrestadorService(PrestadorRepository repository,
-                            ProfissaoRepository profissaoRepository) {
+                            ProfissaoRepository profissaoRepository,
+                            PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.profissaoRepository = profissaoRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -29,7 +31,7 @@ public class PrestadorService {
         prestador.setNome(dto.nome());
         prestador.setEmail(dto.email());
         prestador.setDataNascimento(dto.dataNascimento());
-        prestador.setSenhaHash(dto.senha());
+        prestador.setSenhaHash(passwordEncoder.encode(dto.senha()));
         prestador.setTelefone(dto.telefone());
 
 //        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
@@ -39,16 +41,6 @@ public class PrestadorService {
 
         return repository.save(prestador);
     }
-
-    public boolean login(LoginDTO dto){
-        Prestador prestador = repository.findByEmail(dto.getEmail()).orElse(null);
-
-        if (prestador != null && prestador.getSenhaHash().equals(dto.getSenha())) {
-            return true;
-        }
-        return false;
-    }
-
 
     public List<Prestador> listar(){
         return repository.findAll();
@@ -65,7 +57,7 @@ public class PrestadorService {
             prestador.setNome(dto.nome());
             prestador.setEmail(dto.email());
             prestador.setDataNascimento(dto.dataNascimento());
-            prestador.setSenhaHash(dto.senha());
+            prestador.setSenhaHash(passwordEncoder.encode(dto.senha()));
             prestador.setTelefone(dto.telefone());
 
 //            Profissao profissao = profissaoRepository.findById(dto.profissaoId())
@@ -88,4 +80,5 @@ public class PrestadorService {
 
         repository.save(prestador);
     }
+
 }

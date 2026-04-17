@@ -1,11 +1,9 @@
 package br.unipar.devbackend.fixr.Controller;
 
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
-import br.unipar.devbackend.fixr.dto.LoginDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
 import br.unipar.devbackend.fixr.service.ClienteService;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +22,6 @@ public class ClienteController {
     @PostMapping
     public Cliente cadastrar(@Valid @RequestBody ClienteDTO clienteDTO){
         return clienteService.cadastrar(clienteDTO);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody LoginDTO dto) {
-        return ResponseEntity.ok(clienteService.login(dto));
     }
 
     @PutMapping("/{id}")
