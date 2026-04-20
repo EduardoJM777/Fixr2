@@ -8,16 +8,6 @@ import jakarta.validation.constraints.Size;
 
 public record AnuncioDTO(
 
-        @NotBlank
-        @NotNull
-        @Size(max = 300)
-        String descricao,
 
-        @NotNull
-        Long idProfissao,
-
-        @NotNull
-        @Positive
-        Long idCliente
 
 ) {}
