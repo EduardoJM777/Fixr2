@@ -37,20 +37,20 @@ public class AnunciosService {
         anuncios.setProfissao(proRepository.findById(dto.profissaoId()).orElseThrow());
         anuncios.setCliente(clienteRepository.findById(dto.clienteId()).orElseThrow());
 
-        Anuncio salvo = repository.save(anuncios);
+        Anuncios salvo = repository.save(anuncios);
 
         return toDTO(salvo);
     }
 
     private AnuncioResponseDTO toDTO(Anuncios anuncios){
-        AnuncioResponseDTO response = new AnuncioResponseDTO();
-        response.id(anuncios.getId());
-        response.descricao(anuncios.getDescricao());
-        response.imagemTipo(anuncios.getImagemTipo());
-        response.profissaoId(anuncios.getProfissao().getId());
-        response.clienteId(anuncios.getCliente().getId());
-        response.imagemUrl("/anuncios/" + anuncios.getId() + "/imagem");
-        return response;
+        return new AnuncioResponseDTO(
+            anuncios.getId(),
+            anuncios.getDescricao(),
+            anuncios.getImagemTipo(),
+            anuncios.getProfissao().getId(),
+            anuncios.getCliente().getId(),
+            "/anuncios/" + anuncios.getId() + "/imagem"
+        );
     }
 
     public List<Anuncios> listar(){

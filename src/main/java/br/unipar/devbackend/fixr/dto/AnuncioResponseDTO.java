@@ -2,11 +2,11 @@ package br.unipar.devbackend.fixr.dto;
 
 public record AnuncioResponseDTO (
 
-        Long id,
+        Integer id,
         String descricao,
         String imagemTipo,
         Long profissaoId,
-        Long clienteId,
+        Integer clienteId,
         String imagemUrl
 
 ) { }
