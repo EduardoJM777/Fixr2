@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Table(name = "anuncios")
 @SQLRestriction("ativo = true")
 public class Anuncios {
 
@@ -16,7 +17,7 @@ public class Anuncios {
     private Integer id;
 
     @Lob
-    @Column(name = "imagem", columnDefinition = "LONGBLOB")
+    @Column(name = "imagem", columnDefinition = "OID")
     private byte[] imagem;
     private String imagemTipo;
 
