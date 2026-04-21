@@ -1,6 +1,5 @@
 package br.unipar.devbackend.fixr.dto;
 
-import br.unipar.devbackend.fixr.model.Profissao;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -10,19 +9,15 @@ public record AnuncioDTO(
 
         @NotBlank
         @NotNull
-        @Size(max = 61)
-        String titulo,
-
-        @NotBlank
-        @NotNull
         @Size(max = 300)
         String descricao,
 
         @NotNull
-        Profissao profissao,
+        Long idProfissao,
 
-        @NotNull
+
         @Positive
         Long idCliente
+
 
 ) {}
