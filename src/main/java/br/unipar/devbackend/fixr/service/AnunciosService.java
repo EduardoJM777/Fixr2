@@ -3,13 +3,14 @@ package br.unipar.devbackend.fixr.service;
 import br.unipar.devbackend.fixr.Repository.AnunciosRepository;
 import br.unipar.devbackend.fixr.Repository.ClienteRepository;
 import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
-import br.unipar.devbackend.fixr.dto.AnuncioDTO;
+import br.unipar.devbackend.fixr.dto.AnuncioRequestDTO;
+import br.unipar.devbackend.fixr.dto.AnuncioResponseDTO;
 import br.unipar.devbackend.fixr.model.Anuncios;
-import br.unipar.devbackend.fixr.model.Cliente;
-import br.unipar.devbackend.fixr.model.Profissao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -27,18 +28,29 @@ public class AnunciosService {
         this.proRepository = proRepository;
     }
 
-    public Anuncios cadastrar(AnuncioDTO anuncioDTO) {
+    public AnuncioResponseDTO cadastrar(AnuncioRequestDTO dto,
+                                        MultipartFile imagem) throws IOException {
         Anuncios anuncios = new Anuncios();
-        anuncios.setDescricao(anuncioDTO.descricao());
-        Profissao profissao = proRepository.getReferenceById(anuncioDTO.idProfissao());
-        anuncios.setProfissao(profissao);
-        if (anuncioDTO.idCliente() != null) ;
+        anuncios.setDescricao(dto.descricao());
+        anuncios.setImagem(imagem.getBytes());
+        anuncios.setImagemTipo(imagem.getContentType());
+        anuncios.setProfissao(proRepository.findById(dto.profissaoId()).orElseThrow());
+        anuncios.setCliente(clienteRepository.findById(dto.clienteId()).orElseThrow());
 
-        Cliente cliente = clienteRepository.getReferenceById(anuncioDTO.idCliente());
-        anuncios.setCliente(cliente);
-        {
-            return repository.save(anuncios);
-        }
+        Anuncios salvo = repository.save(anuncios);
+
+        return toDTO(salvo);
+    }
+
+    private AnuncioResponseDTO toDTO(Anuncios anuncios){
+        return new AnuncioResponseDTO(
+            anuncios.getId(),
+            anuncios.getDescricao(),
+            anuncios.getImagemTipo(),
+            anuncios.getProfissao().getId(),
+            anuncios.getCliente().getId(),
+            "/anuncios/" + anuncios.getId() + "/imagem"
+        );
     }
 
     public List<Anuncios> listar(){
@@ -49,21 +61,21 @@ public class AnunciosService {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Anúncio não encontrado"));
     }
 
-    public Anuncios atualizar(Long id, AnuncioDTO anuncioDTOAtualizado){
-        return repository.findById(id).map(anuncios -> {
-
-            anuncios.setDescricao(anuncioDTOAtualizado.descricao());
-            Profissao profissao = proRepository.getReferenceById(anuncioDTOAtualizado.idProfissao());
-            anuncios.setProfissao(profissao);
-
-            if (anuncioDTOAtualizado.idCliente() != null) {
-                Cliente cliente = clienteRepository.getReferenceById(anuncioDTOAtualizado.idCliente());
-                anuncios.setCliente(cliente);
-            }
-
-            return repository.save(anuncios);
-        }).orElseThrow(() -> new RuntimeException("Anúncio não encontrado."));
-    }
+//    public Anuncios atualizar(Long id, AnuncioDTO anuncioDTOAtualizado){
+//        return repository.findById(id).map(anuncios -> {
+//
+//            anuncios.setDescricao(anuncioDTOAtualizado.descricao());
+//            Profissao profissao = proRepository.getReferenceById(anuncioDTOAtualizado.idProfissao());
+//            anuncios.setProfissao(profissao);
+//
+//            if (anuncioDTOAtualizado.idCliente() != null) {
+//                Cliente cliente = clienteRepository.getReferenceById(anuncioDTOAtualizado.idCliente());
+//                anuncios.setCliente(cliente);
+//            }
+//
+//            return repository.save(anuncios);
+//        }).orElseThrow(() -> new RuntimeException("Anúncio não encontrado."));
+//    }
 
     public void deletar(Long id){repository.deleteById(id);
     }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Table(name = "anuncios")
 @SQLRestriction("ativo = true")
 public class Anuncios {
 
@@ -15,7 +16,11 @@ public class Anuncios {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String titulo;
+    @Lob
+    @Column(name = "imagem", columnDefinition = "OID")
+    private byte[] imagem;
+    private String imagemTipo;
+
     private String descricao;
     private LocalDateTime dataPublicacao = LocalDateTime.now();
 
