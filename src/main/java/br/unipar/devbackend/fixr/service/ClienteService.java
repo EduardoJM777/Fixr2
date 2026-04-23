@@ -1,8 +1,11 @@
 package br.unipar.devbackend.fixr.service;
 
 import br.unipar.devbackend.fixr.Repository.ClienteRepository;
+import br.unipar.devbackend.fixr.Repository.EstatisticasRepository;
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
+import br.unipar.devbackend.fixr.dto.EstatisticasDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
+import br.unipar.devbackend.fixr.model.Estatisticas;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,12 +18,15 @@ public class ClienteService {
 
     private final ClienteRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final EstatisticasRepository estatisticasRepository;
 
     @Autowired
     public ClienteService(ClienteRepository repository,
-                          PasswordEncoder passwordEncoder){
+                          PasswordEncoder passwordEncoder,
+                          EstatisticasRepository estatisticasRepository){
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.estatisticasRepository = estatisticasRepository;
     }
 
     public Cliente cadastrar(ClienteDTO clienteDTO){
@@ -30,7 +36,14 @@ public class ClienteService {
         cliente.setDataNascimento(clienteDTO.dataNascimento());
         cliente.setSenhaHash(passwordEncoder.encode(clienteDTO.senha()));
         cliente.setTelefone(clienteDTO.telefone());
-        return repository.save(cliente);
+
+        Cliente clienteSalvo = repository.save(cliente);
+
+        Estatisticas stats = new Estatisticas();
+        stats.setCliente(clienteSalvo);
+        estatisticasRepository.save(stats);
+
+        return clienteSalvo;
     }
 
     public List<Cliente> listar(){
@@ -61,5 +74,24 @@ public class ClienteService {
 
         repository.save(cliente);
     }
+
+    public EstatisticasDTO buscarEstatisticas(Integer clienteId){
+        Estatisticas stats = estatisticasRepository.findByClienteId(clienteId)
+                .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o cliente " + clienteId));
+
+        return new EstatisticasDTO(
+                stats.getAvaliacoesRecebidas(),
+                stats.getAnunciosPublicados(),
+                stats.getTempoNoApp(),
+                stats.getRankingPosicao(),
+                stats.getPrecoMedio()
+        );
+    }
+
+
+
+
+
+
 
 }

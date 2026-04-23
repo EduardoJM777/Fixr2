@@ -1,9 +1,11 @@
 package br.unipar.devbackend.fixr.Controller;
 
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
+import br.unipar.devbackend.fixr.dto.EstatisticasDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
 import br.unipar.devbackend.fixr.service.ClienteService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +44,11 @@ public class ClienteController {
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id){
         clienteService.deletar(id);
+    }
+
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<EstatisticasDTO> getEstatisticas(@PathVariable Integer clienteId) {
+        return ResponseEntity.ok(clienteService.buscarEstatisticas(clienteId));
     }
 
 }
