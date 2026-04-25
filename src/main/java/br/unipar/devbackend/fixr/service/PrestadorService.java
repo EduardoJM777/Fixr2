@@ -1,8 +1,11 @@
 package br.unipar.devbackend.fixr.service;
 
+import br.unipar.devbackend.fixr.Repository.EstatisticasPrestadorRepository;
 import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
 import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
+import br.unipar.devbackend.fixr.dto.EstatisticasPrestadorDTO;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
+import br.unipar.devbackend.fixr.model.EstatisticasPrestador;
 import br.unipar.devbackend.fixr.model.Prestador;
 import br.unipar.devbackend.fixr.model.Profissao;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,13 +19,16 @@ public class PrestadorService {
     private final PrestadorRepository repository;
     private final ProfissaoRepository profissaoRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EstatisticasPrestadorRepository estatisticasPrestadorRepository;
 
     public PrestadorService(PrestadorRepository repository,
                             ProfissaoRepository profissaoRepository,
-                            PasswordEncoder passwordEncoder) {
+                            PasswordEncoder passwordEncoder,
+                            EstatisticasPrestadorRepository estatisticasPrestadorRepository) {
         this.repository = repository;
         this.profissaoRepository = profissaoRepository;
         this.passwordEncoder = passwordEncoder;
+        this.estatisticasPrestadorRepository = estatisticasPrestadorRepository;
     }
 
 
@@ -40,7 +46,14 @@ public class PrestadorService {
 
         prestador.setProfissao(profissao);
 
-        return repository.save(prestador);
+        Prestador prestadorSalvo = repository.save(prestador);
+
+
+        EstatisticasPrestador stats = new EstatisticasPrestador();
+        stats.setPrestador(prestadorSalvo);
+        estatisticasPrestadorRepository.save(stats);
+
+        return prestadorSalvo;
     }
 
     public List<Prestador> listar(){
@@ -80,6 +93,22 @@ public class PrestadorService {
         prestador.setAtivo(false);
 
         repository.save(prestador);
+    }
+
+
+    public EstatisticasPrestadorDTO buscarEstatisticas(Integer prestadorId) {
+
+        EstatisticasPrestador stats = estatisticasPrestadorRepository.findByPrestadorId(prestadorId)
+                .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o prestador " + prestadorId));
+
+        return new EstatisticasPrestadorDTO(
+                stats.getAvaliacoesRecebidas(),
+                stats.getTrabalhosRealizados(),
+                stats.getTempoNoApp(),
+                stats.getRankingPosicao(),
+                stats.getPrecoMedio(),
+                stats.getExperienciaTrabalho()
+        );
     }
 
 }
