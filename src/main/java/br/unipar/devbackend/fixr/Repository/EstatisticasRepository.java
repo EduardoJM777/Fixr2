@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface EstatisticasRepository extends JpaRepository<Estatisticas, Long> {
 
-    Optional<Estatisticas> findByClienteId(Integer clienteId);
+    Optional<Estatisticas> findByClienteId(Long clienteId);
 
 }

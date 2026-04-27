@@ -75,7 +75,7 @@ public class ClienteService {
         repository.save(cliente);
     }
 
-    public EstatisticasDTO buscarEstatisticas(Integer clienteId){
+    public EstatisticasDTO buscarEstatisticas(Long clienteId){
         Estatisticas stats = estatisticasRepository.findByClienteId(clienteId)
                 .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o cliente " + clienteId));
 

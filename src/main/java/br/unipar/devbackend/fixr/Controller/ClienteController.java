@@ -47,8 +47,8 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}/stats")
-    public ResponseEntity<EstatisticasDTO> getEstatisticas(@PathVariable Integer clienteId) {
-        return ResponseEntity.ok(clienteService.buscarEstatisticas(clienteId));
+    public ResponseEntity<EstatisticasDTO> getEstatisticas(@PathVariable Long id) {
+        return ResponseEntity.ok(clienteService.buscarEstatisticas(id));
     }
 
 }
