@@ -5,10 +5,12 @@ import br.unipar.devbackend.fixr.dto.PrestadorDTO;
 import br.unipar.devbackend.fixr.model.Prestador;
 import br.unipar.devbackend.fixr.service.PrestadorService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/prestador")
@@ -47,8 +49,15 @@ public class PrestadorController {
     }
 
     @GetMapping("/{id}/stats")
-    public ResponseEntity<EstatisticasPrestadorDTO> getEstatisticas(@PathVariable Integer id) {
+    public ResponseEntity<EstatisticasPrestadorDTO> getEstatisticas(@PathVariable Long id) {
         return ResponseEntity.ok(prestadorService.buscarEstatisticas(id));
+    }
+
+    @PatchMapping("/{id}/stats/experiencia")
+    public ResponseEntity<Void> atualizarExperiencia(@PathVariable Long id,
+                                                     @RequestBody Map<String, String> body){
+        prestadorService.atualizarExperiencia(id, body.get("experienciaTrabalho"));
+        return ResponseEntity.noContent().build();
     }
 
 }

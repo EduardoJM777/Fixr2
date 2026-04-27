@@ -96,7 +96,7 @@ public class PrestadorService {
     }
 
 
-    public EstatisticasPrestadorDTO buscarEstatisticas(Integer prestadorId) {
+    public EstatisticasPrestadorDTO buscarEstatisticas(Long prestadorId) {
 
         EstatisticasPrestador stats = estatisticasPrestadorRepository.findByPrestadorId(prestadorId)
                 .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o prestador " + prestadorId));
@@ -110,5 +110,17 @@ public class PrestadorService {
                 stats.getExperienciaTrabalho()
         );
     }
+
+    public void atualizarExperiencia(Long prestadorId, String experiencia){
+        EstatisticasPrestador stats = estatisticasPrestadorRepository.findByPrestadorId(prestadorId)
+                .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas"));
+        stats.setExperienciaTrabalho(experiencia);
+        estatisticasPrestadorRepository.save(stats);
+    }
+
+
+
+
+
 
 }

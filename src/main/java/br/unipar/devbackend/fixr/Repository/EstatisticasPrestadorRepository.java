@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface EstatisticasPrestadorRepository extends JpaRepository<EstatisticasPrestador, Long> {
 
-    Optional<EstatisticasPrestador> findByPrestadorId(Integer prestadorId);
+    Optional<EstatisticasPrestador> findByPrestadorId(Long prestadorId);
 
 }
