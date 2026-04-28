@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @SQLRestriction("ativo = true")
-//@table
 public abstract class Usuario {
 
     @Id
@@ -36,5 +35,9 @@ public abstract class Usuario {
     private UserType userType;
 
     private Boolean ativo = true;
+
+    private String foto;
+
+    private Boolean online;
 
 }
