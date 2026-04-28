@@ -13,7 +13,7 @@ public class Mensagens {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String texto;
     private LocalDateTime enviadoEm = LocalDateTime.now();
