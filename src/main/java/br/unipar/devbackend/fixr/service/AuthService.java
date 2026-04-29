@@ -63,7 +63,7 @@ public class AuthService {
     }
 
     private LoginResponseDTO autenticar(Boolean ativo, String senhaBanco,
-                                        String senhaDigitada, Integer id,
+                                        String senhaDigitada, Long id,
                                         String nome, String email, String tipo){
 
         if (!ativo) {

@@ -9,8 +9,8 @@ import java.util.List;
 @Repository
 public interface MensagensRepository extends JpaRepository<Mensagens, Long> {
 
-    List<Mensagens> findByChatIdOrderByEnviadoEmAsc(Integer chatId);
+    List<Mensagens> findByChatIdOrderByEnviadoEmAsc(Long chatId);
 
-    List<Mensagens> findTop50ByChatIdOrderByEnviadoEmDesc(Integer chatId);
+    List<Mensagens> findTop50ByChatIdOrderByEnviadoEmDesc(Long chatId);
 
 }

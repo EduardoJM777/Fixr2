@@ -25,9 +25,9 @@ public class MensagensService {
 
     public Mensagens cadastrar(MensagensDTO mensagensDTO){
         Mensagens mensagens = new Mensagens();
-        mensagens.setTexto(mensagensDTO.texto());
+        mensagens.setTexto(mensagensDTO.getTexto());
 
-        Chats chats = chatsRepository.getReferenceById(mensagensDTO.idChat());
+        Chats chats = chatsRepository.getReferenceById(mensagensDTO.getChatId());
         mensagens.setChat(chats);
 
         return repository.save(mensagens);
@@ -53,9 +53,9 @@ public class MensagensService {
 
     public Mensagens atualizar(Long id, MensagensDTO mensagensDTOatualizadas){
         return repository.findById(id).map(mensagens ->{
-            mensagens.setTexto(mensagensDTOatualizadas.texto());
+            mensagens.setTexto(mensagensDTOatualizadas.getTexto());
 
-            Chats chats = chatsRepository.getReferenceById(mensagensDTOatualizadas.idChat());
+            Chats chats = chatsRepository.getReferenceById(mensagensDTOatualizadas.getChatId());
             mensagens.setChat(chats);
 
             return repository.save(mensagens);

@@ -166,7 +166,7 @@ public class ChatsService {
 
 
     @Transactional(readOnly = true)
-    public List<Mensagens> buscarHistorico(Integer chatId) {
+    public List<Mensagens> buscarHistorico(Long chatId) {
         return mensagensRepository.findByChatIdOrderByEnviadoEmAsc(chatId);
     }
 
@@ -209,6 +209,36 @@ public class ChatsService {
                 "anuncioTitulo", dto.getAnuncioTitulo() != null ? dto.getAnuncioTitulo() : "",
                 "mensagem",      msg.getTexto()
         );
+    }
+
+    public Chats cadastrar(ChatsDTO dto) {
+        Chats chat = new Chats();
+        chat.setCliente(clienteRepository.getReferenceById(dto.getClienteId()));
+        chat.setPrestador(prestadorRepository.getReferenceById(dto.getPrestadorId()));
+        chat.setStatus(Chats.StatusChat.PENDENTE);
+        return chatsRepository.save(chat);
+    }
+
+    public List<Chats> listar() {
+        return chatsRepository.findAll();
+    }
+
+    public Chats buscarPorId(Long id) {
+        return chatsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Chat não encontrado: " + id));
+    }
+
+    public Chats atualizar(Long id, ChatsDTO dto) {
+        Chats chat = buscarPorId(id);
+        chat.setCliente(clienteRepository.getReferenceById(dto.getClienteId()));
+        chat.setPrestador(prestadorRepository.getReferenceById(dto.getPrestadorId()));
+        return chatsRepository.save(chat);
+    }
+
+    public void deletar(Long id) {
+        Chats chat = buscarPorId(id);
+        chat.setAtivo(false);
+        chatsRepository.save(chat);
     }
 
 }

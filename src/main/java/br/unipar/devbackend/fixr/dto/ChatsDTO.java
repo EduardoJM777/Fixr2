@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class ChatsDTO{
+    private Long clienteId;
+    private Long prestadorId;
 
     private Long chamadorId;
     private String chamadorNome;
