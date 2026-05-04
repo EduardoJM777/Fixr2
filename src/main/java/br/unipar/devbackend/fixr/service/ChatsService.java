@@ -40,6 +40,8 @@ public class ChatsService {
     private PrestadorRepository prestadorRepository;
 
     public Chats iniciarChamada(ChatsDTO dto) {
+        System.out.println("iniciarChamada chamado por: " + dto.getChamadorNome());
+        System.out.println("destinatario: " + dto.getDestinatarioId());
         Long clienteId   = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
                 ? dto.getChamadorId() : dto.getDestinatarioId();
         Long prestadorId = dto.getPapelChamador() == Mensagens.PapelRemetente.PRESTADOR
@@ -65,12 +67,13 @@ public class ChatsService {
                 dto.getPapelChamador(), conteudo, Mensagens.TipoMensagem.CALL_REQUEST);
         mensagensRepository.save(msg);
 
-
+        System.out.println("Enviando notificação para usuário: " + dto.getDestinatarioId());
         messagingTemplate.convertAndSendToUser(
                 String.valueOf(dto.getDestinatarioId()),
                 "/queue/chamada",
                 buildPayloadChamada(chat, msg, dto)
         );
+        System.out.println("Notificação enviada!");
 
         return chat;
     }
