@@ -7,9 +7,8 @@ import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
 import br.unipar.devbackend.fixr.dto.ChatsDTO;
 import br.unipar.devbackend.fixr.dto.MensagensDTO;
 import br.unipar.devbackend.fixr.model.Chats;
-import br.unipar.devbackend.fixr.model.Cliente;
 import br.unipar.devbackend.fixr.model.Mensagens;
-import br.unipar.devbackend.fixr.model.Prestador;
+import br.unipar.devbackend.fixr.model.Usuario;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -39,177 +38,7 @@ public class ChatsService {
     @Autowired
     private PrestadorRepository prestadorRepository;
 
-    public Chats iniciarChamada(ChatsDTO dto) {
-        Long clienteId   = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
-                ? dto.getChamadorId() : dto.getDestinatarioId();
-        Long prestadorId = dto.getPapelChamador() == Mensagens.PapelRemetente.PRESTADOR
-                ? dto.getChamadorId() : dto.getDestinatarioId();
-
-
-        Chats chat = chatsRepository
-                .findByClienteIdAndPrestadorId(clienteId, prestadorId)
-                .orElseGet(() -> {
-                    Chats novo = new Chats();
-                    novo.setCliente(clienteRepository.getReferenceById(clienteId));
-                    novo.setPrestador(prestadorRepository.getReferenceById(prestadorId));
-                    novo.setStatus(Chats.StatusChat.PENDENTE);
-                    return chatsRepository.save(novo);
-                });
-
-
-        String conteudo = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
-                ? dto.getChamadorNome() + " quer conversar com você"
-                : dto.getChamadorNome() + " entrou em contato sobre: " + dto.getAnuncioTitulo();
-
-        Mensagens msg = buildMensagem(chat, dto.getChamadorId(), dto.getChamadorNome(),
-                dto.getPapelChamador(), conteudo, Mensagens.TipoMensagem.CALL_REQUEST);
-        mensagensRepository.save(msg);
-
-
-        messagingTemplate.convertAndSendToUser(
-                String.valueOf(dto.getDestinatarioId()),
-                "/queue/chamada",
-                buildPayloadChamada(chat, msg, dto)
-        );
-
-        return chat;
-    }
-
-
-
-    public Chats responderChamada(Long chatId, boolean aceitar, Long respondeuId) {
-        Chats chat = chatsRepository.findById(chatId)
-                .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + chatId));
-
-        if (aceitar) {
-            chat.setStatus(Chats.StatusChat.ATIVO);
-            chatsRepository.save(chat);
-
-            Mensagens joinMsg = buildMensagemSistema(chat, "Chat iniciado", Mensagens.TipoMensagem.JOIN);
-            mensagensRepository.save(joinMsg);
-
-
-            messagingTemplate.convertAndSend("/topic/chat/" + chatId, joinMsg);
-
-
-            Long chamadorId = respondeuId.equals(chat.getCliente().getId())
-                    ? chat.getPrestador().getId() : chat.getCliente().getId();
-            messagingTemplate.convertAndSendToUser(
-                    String.valueOf(chamadorId),
-                    "/queue/resposta-chamada",
-                    Map.of("chatId", chatId, "aceito", true)
-            );
-        } else {
-            chat.setStatus(Chats.StatusChat.ENCERRADO);
-            chat.setDataEncerramento(LocalDateTime.now());
-            chatsRepository.save(chat);
-
-            Long chamadorId = respondeuId.equals(chat.getCliente().getId())
-                    ? chat.getPrestador().getId() : chat.getCliente().getId();
-            messagingTemplate.convertAndSendToUser(
-                    String.valueOf(chamadorId),
-                    "/queue/resposta-chamada",
-                    Map.of("chatId", chatId, "aceito", false)
-            );
-        }
-
-        return chat;
-    }
-
-
-
-    public Mensagens enviarMensagem(MensagensDTO dto) {
-        Chats chat = chatsRepository.findById(dto.getChatId())
-                .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + dto.getChatId()));
-
-        if (chat.getStatus() != Chats.StatusChat.ATIVO) {
-            throw new IllegalStateException("Chat não está ativo");
-        }
-
-        Mensagens msg = new Mensagens();
-        msg.setChat(chat);
-        msg.setTexto(dto.getTexto());
-        msg.setTipo(dto.getTipo());
-        msg.setPapelRemetente(dto.getPapelRemetente());
-
-
-        if (dto.getPapelRemetente() == Mensagens.PapelRemetente.CLIENTE) {
-            msg.setRemetente(clienteRepository.getReferenceById(dto.getRemetenteId()));
-        } else {
-            msg.setRemetente(prestadorRepository.getReferenceById(dto.getRemetenteId()));
-        }
-
-        Mensagens salva = mensagensRepository.save(msg);
-
-
-        messagingTemplate.convertAndSend("/topic/chat/" + dto.getChatId(), salva);
-
-        return salva;
-    }
-
-
-
-    public void encerrarChat(Long chatId) {
-        Chats chat = chatsRepository.findById(chatId)
-                .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + chatId));
-
-        chat.setStatus(Chats.StatusChat.ENCERRADO);
-        chat.setDataEncerramento(LocalDateTime.now());
-        chatsRepository.save(chat);
-
-        Mensagens leaveMsg = buildMensagemSistema(chat, "Chat encerrado", Mensagens.TipoMensagem.LEAVE);
-        mensagensRepository.save(leaveMsg);
-
-        messagingTemplate.convertAndSend("/topic/chat/" + chatId, leaveMsg);
-    }
-
-
-
-    @Transactional(readOnly = true)
-    public List<Mensagens> buscarHistorico(Long chatId) {
-        return mensagensRepository.findByChatIdOrderByEnviadoEmAsc(chatId);
-    }
-
-
-
-    private Mensagens buildMensagem(Chats chat, Long remetenteId, String remetenteNome,
-                                    Mensagens.PapelRemetente papel, String texto, Mensagens.TipoMensagem tipo) {
-        Mensagens msg = new Mensagens();
-        msg.setChat(chat);
-        msg.setTexto(texto);
-        msg.setTipo(tipo);
-        msg.setPapelRemetente(papel);
-        if (papel == Mensagens.PapelRemetente.CLIENTE) {
-            msg.setRemetente(clienteRepository.getReferenceById(remetenteId));
-        } else {
-            msg.setRemetente(prestadorRepository.getReferenceById(remetenteId));
-        }
-        return msg;
-    }
-
-
-
-    private Mensagens buildMensagemSistema(Chats chat, String texto, Mensagens.TipoMensagem tipo) {
-        Mensagens msg = new Mensagens();
-        msg.setChat(chat);
-        msg.setTexto(texto);
-        msg.setTipo(tipo);
-        msg.setPapelRemetente(Mensagens.PapelRemetente.CLIENTE);
-        return msg;
-    }
-
-
-
-    private Map<String, Object> buildPayloadChamada(Chats chat, Mensagens msg, ChatsDTO dto) {
-        return Map.of(
-                "chatId",        chat.getId(),
-                "chamadorId",    dto.getChamadorId(),
-                "chamadorNome",  dto.getChamadorNome(),
-                "papelChamador", dto.getPapelChamador().name(),
-                "anuncioTitulo", dto.getAnuncioTitulo() != null ? dto.getAnuncioTitulo() : "",
-                "mensagem",      msg.getTexto()
-        );
-    }
+    // ─── CRUD básico ──────────────────────────────────────────────────────
 
     public Chats cadastrar(ChatsDTO dto) {
         Chats chat = new Chats();
@@ -241,4 +70,170 @@ public class ChatsService {
         chatsRepository.save(chat);
     }
 
+    // ─── Iniciar chamada ──────────────────────────────────────────────────
+
+    public Chats iniciarChamada(ChatsDTO dto) {
+        System.out.println("iniciarChamada chamado por: " + dto.getChamadorNome());
+        System.out.println("destinatario: " + dto.getDestinatarioId());
+
+        Long clienteId   = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
+                ? dto.getChamadorId() : dto.getDestinatarioId();
+        Long prestadorId = dto.getPapelChamador() == Mensagens.PapelRemetente.PRESTADOR
+                ? dto.getChamadorId() : dto.getDestinatarioId();
+
+        Chats chat = chatsRepository
+                .findByClienteIdAndPrestadorId(clienteId, prestadorId)
+                .orElseGet(() -> {
+                    Chats novo = new Chats();
+                    novo.setCliente(clienteRepository.getReferenceById(clienteId));
+                    novo.setPrestador(prestadorRepository.getReferenceById(prestadorId));
+                    novo.setStatus(Chats.StatusChat.PENDENTE);
+                    return chatsRepository.save(novo);
+                });
+
+        String conteudo = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
+                ? dto.getChamadorNome() + " quer conversar com você"
+                : dto.getChamadorNome() + " entrou em contato sobre: " + dto.getAnuncioTitulo();
+
+        Mensagens msg = buildMensagem(chat, dto.getChamadorId(),
+                dto.getPapelChamador(), conteudo, Mensagens.TipoMensagem.CALL_REQUEST);
+        mensagensRepository.save(msg);
+
+        System.out.println("Enviando notificação para tópico: /topic/usuario/" + dto.getDestinatarioId() + "/chamada");
+
+        // Tópico por usuário em vez de convertAndSendToUser
+        messagingTemplate.convertAndSend(
+                "/topic/usuario/" + dto.getDestinatarioId() + "/chamada",(Object)
+                buildPayloadChamada(chat, msg, dto)
+        );
+
+        System.out.println("Notificação enviada!");
+
+        return chat;
+    }
+
+    // ─── Responder chamada ────────────────────────────────────────────────
+
+    public Chats responderChamada(Long chatId, boolean aceitar, Long respondeuId) {
+        Chats chat = chatsRepository.findById(chatId)
+                .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + chatId));
+
+        Long chamadorId = respondeuId.equals(chat.getCliente().getId())
+                ? chat.getPrestador().getId()
+                : chat.getCliente().getId();
+
+        if (aceitar) {
+            chat.setStatus(Chats.StatusChat.ATIVO);
+            chatsRepository.save(chat);
+
+            Mensagens joinMsg = buildMensagemSistema(chat, "Chat iniciado", Mensagens.TipoMensagem.JOIN);
+            mensagensRepository.save(joinMsg);
+
+            messagingTemplate.convertAndSend("/topic/chat/" + chatId, joinMsg);
+
+            messagingTemplate.convertAndSend(
+                    "/topic/usuario/" + chamadorId + "/resposta-chamada",(Object)
+                    Map.of("chatId", chatId, "aceito", true)
+            );
+        } else {
+            chat.setStatus(Chats.StatusChat.ENCERRADO);
+            chat.setDataEncerramento(LocalDateTime.now());
+            chatsRepository.save(chat);
+
+            messagingTemplate.convertAndSend(
+                    "/topic/usuario/" + chamadorId + "/resposta-chamada",(Object)
+                    Map.of("chatId", chatId, "aceito", false)
+            );
+        }
+
+        return chat;
+    }
+
+    // ─── Enviar mensagem ──────────────────────────────────────────────────
+
+    public Mensagens enviarMensagem(MensagensDTO dto) {
+        Chats chat = chatsRepository.findById(dto.getChatId())
+                .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + dto.getChatId()));
+
+        if (chat.getStatus() != Chats.StatusChat.ATIVO) {
+            throw new IllegalStateException("Chat não está ativo");
+        }
+
+        Mensagens msg = new Mensagens();
+        msg.setChat(chat);
+        msg.setTexto(dto.getTexto());
+        msg.setTipo(dto.getTipo());
+        msg.setPapelRemetente(dto.getPapelRemetente());
+        msg.setRemetente(resolverRemetente(dto.getRemetenteId(), dto.getPapelRemetente()));
+
+        Mensagens salva = mensagensRepository.save(msg);
+
+        messagingTemplate.convertAndSend("/topic/chat/" + dto.getChatId(), salva);
+
+        return salva;
+    }
+
+    // ─── Encerrar chat ────────────────────────────────────────────────────
+
+    public void encerrarChat(Long chatId) {
+        Chats chat = chatsRepository.findById(chatId)
+                .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + chatId));
+
+        chat.setStatus(Chats.StatusChat.ENCERRADO);
+        chat.setDataEncerramento(LocalDateTime.now());
+        chatsRepository.save(chat);
+
+        Mensagens leaveMsg = buildMensagemSistema(chat, "Chat encerrado", Mensagens.TipoMensagem.LEAVE);
+        mensagensRepository.save(leaveMsg);
+
+        messagingTemplate.convertAndSend("/topic/chat/" + chatId, leaveMsg);
+    }
+
+    // ─── Histórico ────────────────────────────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public List<Mensagens> buscarHistorico(Long chatId) {
+        return mensagensRepository.findByChatIdOrderByEnviadoEmAsc(chatId);
+    }
+
+    // ─── Helpers ──────────────────────────────────────────────────────────
+
+    private Usuario resolverRemetente(Long id, Mensagens.PapelRemetente papel) {
+        if (papel == Mensagens.PapelRemetente.CLIENTE) {
+            return clienteRepository.getReferenceById(id);
+        }
+        return prestadorRepository.getReferenceById(id);
+    }
+
+    private Mensagens buildMensagem(Chats chat, Long remetenteId,
+                                    Mensagens.PapelRemetente papel,
+                                    String texto, Mensagens.TipoMensagem tipo) {
+        Mensagens msg = new Mensagens();
+        msg.setChat(chat);
+        msg.setTexto(texto);
+        msg.setTipo(tipo);
+        msg.setPapelRemetente(papel);
+        msg.setRemetente(resolverRemetente(remetenteId, papel));
+        return msg;
+    }
+
+    private Mensagens buildMensagemSistema(Chats chat, String texto, Mensagens.TipoMensagem tipo) {
+        Mensagens msg = new Mensagens();
+        msg.setChat(chat);
+        msg.setTexto(texto);
+        msg.setTipo(tipo);
+        msg.setPapelRemetente(Mensagens.PapelRemetente.CLIENTE);
+        return msg;
+    }
+
+    private Map<String, Object> buildPayloadChamada(Chats chat, Mensagens msg, ChatsDTO dto) {
+        return Map.of(
+                "chatId",        chat.getId(),
+                "chamadorId",    dto.getChamadorId(),
+                "chamadorNome",  dto.getChamadorNome(),
+                "papelChamador", dto.getPapelChamador().name(),
+                "anuncioTitulo", dto.getAnuncioTitulo() != null ? dto.getAnuncioTitulo() : "",
+                "mensagem",      msg.getTexto()
+        );
+    }
 }
