@@ -91,7 +91,7 @@ public class ChatsController {
 
     @MessageMapping("/chat.responder")
     public void responderChamadaWs(@Payload Map<String, Object> payload) {
-        Long chatId   = (Long) payload.get("chatId");
+        Long chatId   = Long.valueOf(payload.get("chatId").toString());
         boolean aceitar  = Boolean.TRUE.equals(payload.get("aceitar"));
         Long respondeuId = Long.valueOf(payload.get("respondeuId").toString());
         chatsService.responderChamada(chatId, aceitar, respondeuId);

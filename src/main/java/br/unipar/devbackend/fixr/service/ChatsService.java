@@ -122,6 +122,12 @@ public class ChatsService {
                 ? chat.getPrestador().getId()
                 : chat.getCliente().getId();
 
+        System.out.println("respondeuId: " + respondeuId);
+        System.out.println("clienteId: " + chat.getCliente().getId());
+        System.out.println("prestadorId: " + chat.getPrestador().getId());
+        System.out.println("chamadorId calculado: " + chamadorId);
+        System.out.println("enviando resposta para: /topic/usuario/" + chamadorId + "/resposta-chamada");
+
         if (aceitar) {
             chat.setStatus(Chats.StatusChat.ATIVO);
             chatsRepository.save(chat);
