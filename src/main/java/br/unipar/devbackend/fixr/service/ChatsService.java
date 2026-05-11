@@ -73,8 +73,11 @@ public class ChatsService {
     // ─── Iniciar chamada ──────────────────────────────────────────────────
 
     public Chats iniciarChamada(ChatsDTO dto) {
-//        System.out.println("iniciarChamada chamado por: " + dto.getChamadorNome());
-//        System.out.println("destinatario: " + dto.getDestinatarioId());
+//        System.out.println("chamadorId: " + dto.getChamadorId());
+//        System.out.println("destinatarioId: " + dto.getDestinatarioId());
+//        System.out.println("papelChamador: " + dto.getPapelChamador());
+//        System.out.println("idCliente: " + dto.getClienteId());
+//        System.out.println("idPrestador: " + dto.getPrestadorId());
 
         Long clienteId   = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
                 ? dto.getChamadorId() : dto.getDestinatarioId();
@@ -101,7 +104,6 @@ public class ChatsService {
 
 //        System.out.println("Enviando notificação para tópico: /topic/usuario/" + dto.getDestinatarioId() + "/chamada");
 
-        // Tópico por usuário em vez de convertAndSendToUser
         messagingTemplate.convertAndSend(
                 "/topic/usuario/" + dto.getDestinatarioId() + "/chamada",(Object)
                 buildPayloadChamada(chat, msg, dto)
@@ -182,7 +184,7 @@ public class ChatsService {
     // ─── Encerrar chat ────────────────────────────────────────────────────
 
     public void encerrarChat(Long chatId) {
-        System.out.println("encerrarChat chamado: " + chatId);
+//        System.out.println("encerrarChat chamado: " + chatId);
         Chats chat = chatsRepository.findById(chatId)
                 .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + chatId));
 

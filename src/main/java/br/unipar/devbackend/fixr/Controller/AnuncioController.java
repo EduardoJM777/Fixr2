@@ -36,7 +36,7 @@ public class AnuncioController {
 //    }
 
     @GetMapping
-    public List<Anuncios> listar(){
+    public List<AnuncioResponseDTO> listar(){
         return anuncioservice.listar();
     }
 

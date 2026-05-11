@@ -53,8 +53,10 @@ public class AnunciosService {
         );
     }
 
-    public List<Anuncios> listar(){
-        return repository.findAll();
+    public List<AnuncioResponseDTO> listar(){
+        return repository.findAll().stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     public Anuncios buscarPorId(Long id){
