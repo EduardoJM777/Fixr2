@@ -73,8 +73,8 @@ public class ChatsService {
     // ─── Iniciar chamada ──────────────────────────────────────────────────
 
     public Chats iniciarChamada(ChatsDTO dto) {
-        System.out.println("iniciarChamada chamado por: " + dto.getChamadorNome());
-        System.out.println("destinatario: " + dto.getDestinatarioId());
+//        System.out.println("iniciarChamada chamado por: " + dto.getChamadorNome());
+//        System.out.println("destinatario: " + dto.getDestinatarioId());
 
         Long clienteId   = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
                 ? dto.getChamadorId() : dto.getDestinatarioId();
@@ -99,7 +99,7 @@ public class ChatsService {
                 dto.getPapelChamador(), conteudo, Mensagens.TipoMensagem.CALL_REQUEST);
         mensagensRepository.save(msg);
 
-        System.out.println("Enviando notificação para tópico: /topic/usuario/" + dto.getDestinatarioId() + "/chamada");
+//        System.out.println("Enviando notificação para tópico: /topic/usuario/" + dto.getDestinatarioId() + "/chamada");
 
         // Tópico por usuário em vez de convertAndSendToUser
         messagingTemplate.convertAndSend(
@@ -107,7 +107,7 @@ public class ChatsService {
                 buildPayloadChamada(chat, msg, dto)
         );
 
-        System.out.println("Notificação enviada!");
+//        System.out.println("Notificação enviada!");
 
         return chat;
     }
@@ -122,11 +122,11 @@ public class ChatsService {
                 ? chat.getPrestador().getId()
                 : chat.getCliente().getId();
 
-        System.out.println("respondeuId: " + respondeuId);
-        System.out.println("clienteId: " + chat.getCliente().getId());
-        System.out.println("prestadorId: " + chat.getPrestador().getId());
-        System.out.println("chamadorId calculado: " + chamadorId);
-        System.out.println("enviando resposta para: /topic/usuario/" + chamadorId + "/resposta-chamada");
+//        System.out.println("respondeuId: " + respondeuId);
+//        System.out.println("clienteId: " + chat.getCliente().getId());
+//        System.out.println("prestadorId: " + chat.getPrestador().getId());
+//        System.out.println("chamadorId calculado: " + chamadorId);
+//        System.out.println("enviando resposta para: /topic/usuario/" + chamadorId + "/resposta-chamada");
 
         if (aceitar) {
             chat.setStatus(Chats.StatusChat.ATIVO);
@@ -182,6 +182,7 @@ public class ChatsService {
     // ─── Encerrar chat ────────────────────────────────────────────────────
 
     public void encerrarChat(Long chatId) {
+        System.out.println("encerrarChat chamado: " + chatId);
         Chats chat = chatsRepository.findById(chatId)
                 .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + chatId));
 

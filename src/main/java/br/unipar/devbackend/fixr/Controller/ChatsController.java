@@ -99,7 +99,7 @@ public class ChatsController {
 
     @MessageMapping("/chat.encerrar")
     public void encerrarChatWs(@Payload Map<String, Object> payload) {
-        Long chatId = (Long) payload.get("chatId");
+        Long chatId = Long.valueOf(payload.get("chatId").toString());
         chatsService.encerrarChat(chatId);
     }
 }

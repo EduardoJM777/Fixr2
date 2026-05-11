@@ -6,7 +6,9 @@ public record AnuncioResponseDTO (
         String descricao,
         String imagemTipo,
         Long profissaoId,
+        String profissaoNome,
         Long clienteId,
+        String clienteNome,
         String imagemUrl
 
 ) { }
