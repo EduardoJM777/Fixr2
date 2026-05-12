@@ -52,6 +52,16 @@ public class ChatsController {
         chatsService.deletar(id);
     }
 
+    @GetMapping("/cliente/{clienteId}")
+    public List<Chats> listarPorCliente(@PathVariable Long clienteId) {
+        return chatsService.listarPorCliente(clienteId);
+    }
+
+    @GetMapping("/prestador/{prestadorId}")
+    public List<Chats> listarPorPrestador(@PathVariable Long prestadorId) {
+        return chatsService.listarPorPrestador(prestadorId);
+    }
+
 
 
     @PostMapping("/chamar")

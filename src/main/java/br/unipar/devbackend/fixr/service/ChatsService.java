@@ -245,4 +245,14 @@ public class ChatsService {
                 "mensagem",      msg.getTexto()
         );
     }
+
+    @Transactional(readOnly = true)
+    public List<Chats> listarPorCliente(Long clienteId) {
+        return chatsRepository.findByClienteIdAndStatus(clienteId, Chats.StatusChat.ATIVO);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Chats> listarPorPrestador(Long prestadorId) {
+        return chatsRepository.findByPrestadorIdAndStatus(prestadorId, Chats.StatusChat.ATIVO);
+    }
 }
