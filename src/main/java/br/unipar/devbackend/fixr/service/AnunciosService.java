@@ -49,7 +49,7 @@ public class AnunciosService {
             anuncios.getImagemTipo(),
             anuncios.getProfissao().getId(), anuncios.getProfissao().getNome(),
             anuncios.getCliente().getId(), anuncios.getCliente().getNome(),
-            "/anuncios/" + anuncios.getId() + "/imagem"
+            "/anuncio/" + anuncios.getId() + "/imagem"
         );
     }
 
