@@ -8,6 +8,7 @@ import br.unipar.devbackend.fixr.dto.AnuncioResponseDTO;
 import br.unipar.devbackend.fixr.model.Anuncios;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -42,19 +43,10 @@ public class AnunciosService {
         return toDTO(salvo);
     }
 
-    private AnuncioResponseDTO toDTO(Anuncios anuncios){
-        return new AnuncioResponseDTO(
-            anuncios.getId(),
-            anuncios.getDescricao(),
-            anuncios.getImagemTipo(),
-            anuncios.getProfissao().getId(),
-            anuncios.getCliente().getId(),
-            "/anuncios/" + anuncios.getId() + "/imagem"
-        );
-    }
-
-    public List<Anuncios> listar(){
-        return repository.findAll();
+    public List<AnuncioResponseDTO> listar(){
+        return repository.findAll().stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     public Anuncios buscarPorId(Long id){
@@ -78,6 +70,26 @@ public class AnunciosService {
 //    }
 
     public void deletar(Long id){repository.deleteById(id);
+    }
+
+
+
+    private AnuncioResponseDTO toDTO(Anuncios anuncios){
+        return new AnuncioResponseDTO(
+                anuncios.getId(),
+                anuncios.getDescricao(),
+                anuncios.getImagemTipo(),
+                anuncios.getProfissao().getId(), anuncios.getProfissao().getNome(),
+                anuncios.getCliente().getId(), anuncios.getCliente().getNome(),
+                "/anuncio/" + anuncios.getId() + "/imagem"
+        );
+    }
+
+    @Transactional
+    public List<AnuncioResponseDTO> listarPorCliente(Long clienteId) {
+        return repository.findByClienteId(clienteId).stream()
+                .map(this::toDTO)
+                .toList();
     }
 
 }

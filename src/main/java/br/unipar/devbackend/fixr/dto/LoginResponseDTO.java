@@ -2,7 +2,7 @@ package br.unipar.devbackend.fixr.dto;
 
 public record LoginResponseDTO(
 
-     Integer id,
+     Long id,
      String nome,
      String email,
      String tipo

@@ -36,7 +36,7 @@ public class AnuncioController {
 //    }
 
     @GetMapping
-    public List<Anuncios> listar(){
+    public List<AnuncioResponseDTO> listar(){
         return anuncioservice.listar();
     }
 
@@ -44,6 +44,13 @@ public class AnuncioController {
     public Anuncios buscarPorId(@PathVariable Long id){
         return anuncioservice.buscarPorId(id);
     }
+
+    @DeleteMapping("/{id}")
+    public void deletar(@PathVariable Long id){
+        anuncioservice.deletar(id);
+    }
+
+
 
     @GetMapping("/{id}/imagem")
     public ResponseEntity<byte[]> getImagem(@PathVariable Long id){
@@ -54,9 +61,9 @@ public class AnuncioController {
                 .body(anuncios.getImagem());
     }
 
-    @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id){
-        anuncioservice.deletar(id);
+    @GetMapping("/cliente/{clienteId}")
+    public List<AnuncioResponseDTO> listarPorCliente(@PathVariable Long clienteId) {
+        return anuncioservice.listarPorCliente(clienteId);
     }
 
 

@@ -1,16 +1,21 @@
 package br.unipar.devbackend.fixr.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import br.unipar.devbackend.fixr.model.Mensagens;
+import lombok.Data;
 
-public record ChatsDTO(
+@Data
+public class ChatsDTO{
+    private Long clienteId;
+    private Long prestadorId;
 
-        @NotNull
-        @Positive
-        Long idPrestador,
+    private Long chamadorId;
+    private String chamadorNome;
+    private Mensagens.PapelRemetente papelChamador;
 
-        @NotNull
-        @Positive
-        Long idCliente
+    private Long destinatarioId;
+    private String destinatarioNome;
 
-) {}
+    private Long anuncioId;
+    private String anuncioTitulo;
+
+}
