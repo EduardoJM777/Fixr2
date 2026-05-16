@@ -17,7 +17,7 @@ public interface PrestadorRepository extends JpaRepository<Prestador, Long> {
     @Query(value = """
         SELECT u.id, u.nome, u.email, u.senha_hash, u.data_cadastro,
                u.data_nascimento, u.telefone, u.user_type, u.ativo,
-               p.profissao_id        
+               p.profissao_id, u.foto, u.online
         FROM prestador p
         INNER JOIN usuario u ON p.id = u.id
         WHERE u.email = :email        

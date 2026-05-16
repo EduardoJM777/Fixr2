@@ -13,7 +13,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     @Query(value = """
         SELECT u.id, u.nome, u.email, u.senha_hash, u.data_cadastro,
-               u.data_nascimento, u.telefone, u.user_type, u.ativo
+               u.data_nascimento, u.telefone, u.user_type, u.ativo,
+               u.foto, u.online        
         FROM cliente c
         INNER JOIN usuario u ON c.id = u.id
         WHERE u.email = :email        
