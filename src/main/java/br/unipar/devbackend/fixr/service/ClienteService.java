@@ -55,14 +55,22 @@ public class ClienteService {
     }
 
     public Cliente atualizar(Long id, ClienteDTO clienteDTOAtualizado){
-        return repository.findById(id).map(cliente -> {
-            cliente.setNome(clienteDTOAtualizado.nome());
-            cliente.setEmail(clienteDTOAtualizado.email());
-            cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
+
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+
+        cliente.setNome(clienteDTOAtualizado.nome());
+        cliente.setEmail(clienteDTOAtualizado.email());
+        cliente.setTelefone(clienteDTOAtualizado.telefone());
+        cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
+
+        // Só atualiza a senha se ela foi enviada
+        if (clienteDTOAtualizado.senha() != null && !clienteDTOAtualizado.senha().isBlank()) {
             cliente.setSenhaHash(passwordEncoder.encode(clienteDTOAtualizado.senha()));
-            cliente.setTelefone(clienteDTOAtualizado.telefone());
-            return repository.save(cliente);
-        }).orElseThrow(() -> new RuntimeException("Erro"));
+        }
+
+        return repository.save(cliente);
+
     }
 
     public void deletar(Long id){
