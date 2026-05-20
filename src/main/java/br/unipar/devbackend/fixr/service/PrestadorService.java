@@ -71,11 +71,14 @@ public class PrestadorService {
             prestador.setNome(dto.nome());
             prestador.setEmail(dto.email());
             prestador.setDataNascimento(dto.dataNascimento());
-            prestador.setSenhaHash(passwordEncoder.encode(dto.senha()));
             prestador.setTelefone(dto.telefone());
 
             Profissao profissao = profissaoRepository.findById(dto.profissaoId())
                     .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
+
+            if (dto.senha() != null && !dto.senha().isBlank()) {
+                prestador.setSenhaHash(passwordEncoder.encode(dto.senha()));
+            }
 
             prestador.setProfissao(profissao);
 
