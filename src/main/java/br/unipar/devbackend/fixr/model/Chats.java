@@ -35,6 +35,8 @@ public class Chats {
         ENCERRADO
     }
 
-
+    @ManyToOne
+    @JoinColumn(name = "anuncio_id")
+    private Anuncios anuncio;
 
 }
