@@ -32,27 +32,25 @@ public class AuthService {
 
         Optional<Cliente> clienteOpt = clienteRepository.findByEmail(dto.email());
         if (clienteOpt.isPresent()) {
+            Cliente cliente = clienteOpt.get();
+            cliente.setOnline(true);
+            clienteRepository.save(cliente);
             return autenticar(
-                    clienteOpt.get().getAtivo(),
-                    clienteOpt.get().getSenhaHash(),
-                    dto.senha(),
-                    clienteOpt.get().getId(),
-                    clienteOpt.get().getNome(),
-                    clienteOpt.get().getEmail(),
-                    "CLIENTE"
+                    cliente.getAtivo(), cliente.getSenhaHash(),
+                    dto.senha(), cliente.getId(),
+                    cliente.getNome(), cliente.getEmail(), "CLIENTE"
             );
         }
 
         Optional<Prestador> prestadorOpt = prestadorRepository.findByEmail(dto.email());
         if (prestadorOpt.isPresent()) {
+            Prestador prestador = prestadorOpt.get();
+            prestador.setOnline(true);
+            prestadorRepository.save(prestador);
             return autenticar(
-                    prestadorOpt.get().getAtivo(),
-                    prestadorOpt.get().getSenhaHash(),
-                    dto.senha(),
-                    prestadorOpt.get().getId(),
-                    prestadorOpt.get().getNome(),
-                    prestadorOpt.get().getEmail(),
-                    "PRESTADOR"
+                    prestador.getAtivo(), prestador.getSenhaHash(),
+                    dto.senha(), prestador.getId(),
+                    prestador.getNome(), prestador.getEmail(), "PRESTADOR"
             );
         }
 
