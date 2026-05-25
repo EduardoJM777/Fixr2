@@ -1,9 +1,6 @@
 package br.unipar.devbackend.fixr.service;
 
-import br.unipar.devbackend.fixr.Repository.ChatsRepository;
-import br.unipar.devbackend.fixr.Repository.ClienteRepository;
-import br.unipar.devbackend.fixr.Repository.MensagensRepository;
-import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
+import br.unipar.devbackend.fixr.Repository.*;
 import br.unipar.devbackend.fixr.dto.ChatsDTO;
 import br.unipar.devbackend.fixr.dto.MensagensDTO;
 import br.unipar.devbackend.fixr.model.Chats;
@@ -37,6 +34,9 @@ public class ChatsService {
 
     @Autowired
     private PrestadorRepository prestadorRepository;
+
+    @Autowired
+    private AnunciosRepository anunciosRepository;
 
     // ─── CRUD básico ──────────────────────────────────────────────────────
 
@@ -73,11 +73,7 @@ public class ChatsService {
     // ─── Iniciar chamada ──────────────────────────────────────────────────
 
     public Chats iniciarChamada(ChatsDTO dto) {
-//        System.out.println("chamadorId: " + dto.getChamadorId());
-//        System.out.println("destinatarioId: " + dto.getDestinatarioId());
-//        System.out.println("papelChamador: " + dto.getPapelChamador());
-//        System.out.println("idCliente: " + dto.getClienteId());
-//        System.out.println("idPrestador: " + dto.getPrestadorId());
+//        System.out.println("anuncioId recebido: " + dto.getAnuncioId());
 
         Long clienteId   = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
                 ? dto.getChamadorId() : dto.getDestinatarioId();
@@ -91,8 +87,15 @@ public class ChatsService {
                     novo.setCliente(clienteRepository.getReferenceById(clienteId));
                     novo.setPrestador(prestadorRepository.getReferenceById(prestadorId));
                     novo.setStatus(Chats.StatusChat.PENDENTE);
-                    return chatsRepository.save(novo);
+
+                    return novo;
                 });
+
+        if (dto.getAnuncioId() != null) {
+            chat.setAnuncio(anunciosRepository.getReferenceById(dto.getAnuncioId()));
+        }
+
+        chatsRepository.save(chat);
 
         String conteudo = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
                 ? dto.getChamadorNome() + " quer conversar com você"
