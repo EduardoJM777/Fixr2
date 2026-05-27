@@ -1,10 +1,12 @@
 package br.unipar.devbackend.fixr.service;
 
+import br.unipar.devbackend.fixr.Repository.AvaliacoesRepository;
 import br.unipar.devbackend.fixr.Repository.EstatisticasPrestadorRepository;
 import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
 import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
 import br.unipar.devbackend.fixr.dto.EstatisticasPrestadorDTO;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
+import br.unipar.devbackend.fixr.model.Avaliacoes;
 import br.unipar.devbackend.fixr.model.EstatisticasPrestador;
 import br.unipar.devbackend.fixr.model.Prestador;
 import br.unipar.devbackend.fixr.model.Profissao;
@@ -20,15 +22,18 @@ public class PrestadorService {
     private final ProfissaoRepository profissaoRepository;
     private final PasswordEncoder passwordEncoder;
     private final EstatisticasPrestadorRepository estatisticasPrestadorRepository;
+    private final AvaliacoesRepository avaliacoesRepository;
 
     public PrestadorService(PrestadorRepository repository,
                             ProfissaoRepository profissaoRepository,
                             PasswordEncoder passwordEncoder,
-                            EstatisticasPrestadorRepository estatisticasPrestadorRepository) {
+                            EstatisticasPrestadorRepository estatisticasPrestadorRepository,
+                            AvaliacoesRepository avaliacoesRepository) {
         this.repository = repository;
         this.profissaoRepository = profissaoRepository;
         this.passwordEncoder = passwordEncoder;
         this.estatisticasPrestadorRepository = estatisticasPrestadorRepository;
+        this.avaliacoesRepository = avaliacoesRepository;
     }
 
 
@@ -104,13 +109,19 @@ public class PrestadorService {
         EstatisticasPrestador stats = estatisticasPrestadorRepository.findByPrestadorId(prestadorId)
                 .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o prestador " + prestadorId));
 
+        Double ultimaNota = avaliacoesRepository
+                .findTopByPrestadorIdOrderByDataDesc(prestadorId)
+                .map(Avaliacoes::getNota)
+                .orElse(null);
+
         return new EstatisticasPrestadorDTO(
                 stats.getAvaliacoesRecebidas(),
                 stats.getTrabalhosRealizados(),
                 stats.getTempoNoApp(),
                 stats.getRankingPosicao(),
                 stats.getPrecoMedio(),
-                stats.getExperienciaTrabalho()
+                stats.getExperienciaTrabalho(),
+                ultimaNota
         );
     }
 
