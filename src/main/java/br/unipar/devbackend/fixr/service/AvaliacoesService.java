@@ -52,6 +52,10 @@ public class AvaliacoesService {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Avaliação não encontrada."));
     }
 
+    public List<Avaliacoes> listarPorPrestador(Long id) {
+        return repository.findByPrestadorId(id);
+    }
+
     public Avaliacoes atualizar(Long id, AvaliacoesDTO avaliacoesDTOatualizado){
         return repository.findById(id).map(avaliacoes -> {
             avaliacoes.setNota(avaliacoesDTOatualizado.nota());
