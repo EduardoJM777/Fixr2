@@ -8,11 +8,13 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@Controller
 @RestController
 @RequestMapping("/acordos")
 @CrossOrigin(origins="*")
@@ -75,7 +77,7 @@ public class AcordosController {
         acordosService.cancelarAcordo(acordoId);
     }
 
-    @GetMapping("/acordos/chat/{chatId}")
+    @GetMapping("/chat/{chatId}")
     public ResponseEntity<Acordos> buscarAcordoPorChat(@PathVariable Long chatId) {
         return acordosService.buscarPorChatId(chatId)
                 .map(ResponseEntity::ok)
