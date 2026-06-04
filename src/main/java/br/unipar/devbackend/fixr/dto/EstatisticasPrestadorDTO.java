@@ -10,6 +10,7 @@ public record EstatisticasPrestadorDTO(
         String tempoNoApp,
         Integer rankingPosicao,
         BigDecimal precoMedio,
-        String experienciaTrabalho
+        String experienciaTrabalho,
+        Double ultimaNota
 
 ) {}
