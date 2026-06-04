@@ -39,8 +39,14 @@ public class AvaliacoesController {
         return service.listarPorPrestador(id);
     }
 
+    @GetMapping("/cliente/{id}")
+    public List<Avaliacoes> listarPorCliente(@PathVariable Long id) {
+        return service.listarPorCliente(id);
+    }
+
     @PutMapping("/{id}")
-    public Avaliacoes atualizar(@PathVariable Long id, @Valid @RequestBody AvaliacoesDTO avaliacoesDTO){
+    public Avaliacoes atualizar(@PathVariable Long id,
+                                @Valid @RequestBody AvaliacoesDTO avaliacoesDTO){
         return service.atualizar(id, avaliacoesDTO);
     }
 

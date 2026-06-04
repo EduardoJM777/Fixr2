@@ -14,4 +14,10 @@ public interface AvaliacoesRepository extends JpaRepository<Avaliacoes, Long> {
 
     List<Avaliacoes> findByPrestadorId(Long id);
 
+    long countByPrestadorId(Long prestadorId);
+
+    List<Avaliacoes> findByClienteId(Long id);
+
+    long countByClienteId(Long clienteId);
+
 }

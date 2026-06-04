@@ -114,8 +114,10 @@ public class PrestadorService {
                 .map(Avaliacoes::getNota)
                 .orElse(null);
 
+        long totalAvaliacoes = avaliacoesRepository.countByPrestadorId(prestadorId);
+
         return new EstatisticasPrestadorDTO(
-                stats.getAvaliacoesRecebidas(),
+                (int) totalAvaliacoes,
                 stats.getTrabalhosRealizados(),
                 stats.getTempoNoApp(),
                 stats.getRankingPosicao(),
@@ -131,10 +133,5 @@ public class PrestadorService {
         stats.setExperienciaTrabalho(experiencia);
         estatisticasPrestadorRepository.save(stats);
     }
-
-
-
-
-
 
 }
