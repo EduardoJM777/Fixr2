@@ -1,5 +1,7 @@
 package br.unipar.devbackend.fixr.dto;
 
+import br.unipar.devbackend.fixr.model.StatusAnuncio;
+
 public record AnuncioResponseDTO (
 
         Long id,
@@ -9,6 +11,7 @@ public record AnuncioResponseDTO (
         String profissaoNome,
         Long clienteId,
         String clienteNome,
-        String imagemUrl
+        String imagemUrl,
+        StatusAnuncio statusAnuncio
 
 ) { }
