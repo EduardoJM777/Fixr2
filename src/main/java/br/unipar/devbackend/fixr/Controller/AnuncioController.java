@@ -4,6 +4,7 @@ import br.unipar.devbackend.fixr.dto.AnuncioRequestDTO;
 import br.unipar.devbackend.fixr.dto.AnuncioResponseDTO;
 import br.unipar.devbackend.fixr.model.Anuncios;
 import br.unipar.devbackend.fixr.service.AnunciosService;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +31,10 @@ public class AnuncioController {
         return ResponseEntity.ok(anuncioservice.cadastrar(dto, imagem));
     }
 
-//    @PutMapping("/{id}")
-//    public Anuncios atualizar(@PathVariable Long id, @Valid @RequestBody AnuncioDTO anuncioDTO){
-//        return anuncioservice.atualizar(id, anuncioDTO);
-//    }
+    @PutMapping("/{id}")
+    public AnuncioResponseDTO atualizar(@PathVariable Long id, @Valid @RequestBody AnuncioRequestDTO anuncioRequestDTO){
+        return anuncioservice.atualizar(id, anuncioRequestDTO);
+    }
 
     @GetMapping
     public List<AnuncioResponseDTO> listar(){
