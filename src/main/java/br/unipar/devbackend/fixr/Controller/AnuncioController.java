@@ -41,8 +41,8 @@ public class AnuncioController {
     }
 
     @GetMapping("/{id}")
-    public Anuncios buscarPorId(@PathVariable Long id){
-        return anuncioservice.buscarPorId(id);
+    public AnuncioResponseDTO buscarPorId(@PathVariable Long id){
+        return anuncioservice.buscarPorIdDTO(id);
     }
 
     @DeleteMapping("/{id}")

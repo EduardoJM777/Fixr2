@@ -1,5 +1,6 @@
 package br.unipar.devbackend.fixr.service;
 
+import br.unipar.devbackend.fixr.Repository.AnunciosRepository;
 import br.unipar.devbackend.fixr.Repository.AvaliacoesRepository;
 import br.unipar.devbackend.fixr.Repository.ClienteRepository;
 import br.unipar.devbackend.fixr.Repository.EstatisticasRepository;
@@ -21,16 +22,19 @@ public class ClienteService {
     private final PasswordEncoder passwordEncoder;
     private final EstatisticasRepository estatisticasRepository;
     private final AvaliacoesRepository avaliacoesRepository;
+    private final AnunciosRepository anunciosRepository;
 
     @Autowired
     public ClienteService(ClienteRepository repository,
                           PasswordEncoder passwordEncoder,
                           EstatisticasRepository estatisticasRepository,
-                          AvaliacoesRepository avaliacoesRepository){
+                          AvaliacoesRepository avaliacoesRepository,
+                          AnunciosRepository anunciosRepository){
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.estatisticasRepository = estatisticasRepository;
         this.avaliacoesRepository = avaliacoesRepository;
+        this.anunciosRepository = anunciosRepository;
     }
 
     public Cliente cadastrar(ClienteDTO clienteDTO){
@@ -92,10 +96,11 @@ public class ClienteService {
                 .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o cliente " + clienteId));
 
         long totalAvaliacoes = avaliacoesRepository.countByClienteId(clienteId);
+        long totalAnuncios = anunciosRepository.countByClienteId(clienteId);
 
         return new EstatisticasDTO(
                 (int) totalAvaliacoes,
-                stats.getAnunciosPublicados(),
+                (int) totalAnuncios,
                 stats.getTempoNoApp(),
                 stats.getRankingPosicao(),
                 stats.getPrecoMedio()
