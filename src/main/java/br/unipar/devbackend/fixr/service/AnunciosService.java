@@ -86,6 +86,10 @@ public class AnunciosService {
         );
     }
 
+    public AnuncioResponseDTO buscarPorIdDTO(Long id){
+        return toDTO(buscarPorId(id));
+    }
+
     @Transactional
     public List<AnuncioResponseDTO> listarPorCliente(Long clienteId) {
         return repository.findByClienteId(clienteId).stream()

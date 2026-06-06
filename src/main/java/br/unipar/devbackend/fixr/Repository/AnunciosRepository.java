@@ -11,4 +11,6 @@ public interface AnunciosRepository extends JpaRepository<Anuncios, Long> {
 
     List<Anuncios> findByClienteId(Long clienteId);
 
+    long countByClienteId(Long clienteId);
+
 }
