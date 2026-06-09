@@ -72,7 +72,6 @@ public class ClienteService {
         cliente.setTelefone(clienteDTOAtualizado.telefone());
         cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
 
-        // Só atualiza a senha se ela foi enviada
         if (clienteDTOAtualizado.senha() != null && !clienteDTOAtualizado.senha().isBlank()) {
             cliente.setSenhaHash(passwordEncoder.encode(clienteDTOAtualizado.senha()));
         }

@@ -18,7 +18,6 @@ public class EstatisticasAnuncioService {
     private final EstatisticasAnuncioRepository estatisticasRepository;
     private final AnunciosRepository anuncioRepository;
 
-    // Cria o registro de estatísticas para um anúncio
     public EstatisticasAnuncioDTO criar(Long anuncioId) {
         Anuncios anuncio = anuncioRepository.findById(anuncioId)
                 .orElseThrow(() -> new EntityNotFoundException("Anúncio não encontrado: " + anuncioId));
@@ -39,14 +38,12 @@ public class EstatisticasAnuncioService {
         return toDTO(salvo);
     }
 
-    // Busca estatísticas de um anúncio
     public EstatisticasAnuncioDTO buscarPorAnuncio(Long anuncioId) {
         EstatisticasAnuncio stats = estatisticasRepository.findByAnuncioId(anuncioId)
                 .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o anúncio " + anuncioId));
         return toDTO(stats);
     }
 
-    // Incrementa visualização total (chamar sempre que o anúncio for visualizado)
     public EstatisticasAnuncioDTO registrarVisualizacao(Long anuncioId, boolean unica) {
         EstatisticasAnuncio stats = estatisticasRepository.findByAnuncioId(anuncioId)
                 .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o anúncio " + anuncioId));
@@ -58,7 +55,6 @@ public class EstatisticasAnuncioService {
         return toDTO(stats);
     }
 
-    // Incrementa clique (chamar quando alguém clicar no anúncio)
     public EstatisticasAnuncioDTO registrarClique(Long anuncioId) {
         EstatisticasAnuncio stats = estatisticasRepository.findByAnuncioId(anuncioId)
                 .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o anúncio " + anuncioId));
@@ -69,7 +65,6 @@ public class EstatisticasAnuncioService {
         return toDTO(stats);
     }
 
-    // Recalcula o ranking de todos os anúncios por CTR
     private void recalcularRankings() {
         List<EstatisticasAnuncio> todos = estatisticasRepository.findAllOrderedByCliques();
         for (int i = 0; i < todos.size(); i++) {

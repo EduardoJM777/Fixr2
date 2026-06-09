@@ -38,8 +38,6 @@ public class ChatsService {
     @Autowired
     private AnunciosRepository anunciosRepository;
 
-    // ─── CRUD básico ──────────────────────────────────────────────────────
-
     public Chats cadastrar(ChatsDTO dto) {
         Chats chat = new Chats();
         chat.setCliente(clienteRepository.getReferenceById(dto.getClienteId()));
@@ -70,10 +68,9 @@ public class ChatsService {
         chatsRepository.save(chat);
     }
 
-    // ─── Iniciar chamada ──────────────────────────────────────────────────
+
 
     public Chats iniciarChamada(ChatsDTO dto) {
-//        System.out.println("anuncioId recebido: " + dto.getAnuncioId());
 
         Long clienteId   = dto.getPapelChamador() == Mensagens.PapelRemetente.CLIENTE
                 ? dto.getChamadorId() : dto.getDestinatarioId();
@@ -105,19 +102,13 @@ public class ChatsService {
                 dto.getPapelChamador(), conteudo, Mensagens.TipoMensagem.CALL_REQUEST);
         mensagensRepository.save(msg);
 
-//        System.out.println("Enviando notificação para tópico: /topic/usuario/" + dto.getDestinatarioId() + "/chamada");
-
         messagingTemplate.convertAndSend(
                 "/topic/usuario/" + dto.getDestinatarioId() + "/chamada",(Object)
                 buildPayloadChamada(chat, msg, dto)
         );
 
-//        System.out.println("Notificação enviada!");
-
         return chat;
     }
-
-    // ─── Responder chamada ────────────────────────────────────────────────
 
     public Chats responderChamada(Long chatId, boolean aceitar, Long respondeuId) {
         Chats chat = chatsRepository.findById(chatId)
@@ -126,12 +117,6 @@ public class ChatsService {
         Long chamadorId = respondeuId.equals(chat.getCliente().getId())
                 ? chat.getPrestador().getId()
                 : chat.getCliente().getId();
-
-//        System.out.println("respondeuId: " + respondeuId);
-//        System.out.println("clienteId: " + chat.getCliente().getId());
-//        System.out.println("prestadorId: " + chat.getPrestador().getId());
-//        System.out.println("chamadorId calculado: " + chamadorId);
-//        System.out.println("enviando resposta para: /topic/usuario/" + chamadorId + "/resposta-chamada");
 
         if (aceitar) {
             chat.setStatus(Chats.StatusChat.ATIVO);
@@ -160,8 +145,6 @@ public class ChatsService {
         return chat;
     }
 
-    // ─── Enviar mensagem ──────────────────────────────────────────────────
-
     public Mensagens enviarMensagem(MensagensDTO dto) {
         Chats chat = chatsRepository.findById(dto.getChatId())
                 .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + dto.getChatId()));
@@ -184,10 +167,7 @@ public class ChatsService {
         return salva;
     }
 
-    // ─── Encerrar chat ────────────────────────────────────────────────────
-
     public void encerrarChat(Long chatId) {
-//        System.out.println("encerrarChat chamado: " + chatId);
         Chats chat = chatsRepository.findById(chatId)
                 .orElseThrow(() -> new RuntimeException("Chat não encontrado: " + chatId));
 
@@ -201,14 +181,10 @@ public class ChatsService {
         messagingTemplate.convertAndSend("/topic/chat/" + chatId, leaveMsg);
     }
 
-    // ─── Histórico ────────────────────────────────────────────────────────
-
     @Transactional(readOnly = true)
     public List<Mensagens> buscarHistorico(Long chatId) {
         return mensagensRepository.findByChatIdOrderByEnviadoEmAsc(chatId);
     }
-
-    // ─── Helpers ──────────────────────────────────────────────────────────
 
     private Usuario resolverRemetente(Long id, Mensagens.PapelRemetente papel) {
         if (papel == Mensagens.PapelRemetente.CLIENTE) {

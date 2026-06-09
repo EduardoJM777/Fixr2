@@ -11,7 +11,6 @@ public interface EstatisticasAnuncioRepository extends JpaRepository<Estatistica
 
     Optional<EstatisticasAnuncio> findByAnuncioId(Long anuncioId);
 
-    // Retorna todos os anúncios ordenados por cliques desc para calcular ranking
     @Query("SELECT e FROM EstatisticasAnuncio e ORDER BY e.cliques DESC")
     List<EstatisticasAnuncio> findAllOrderedByCliques();
 

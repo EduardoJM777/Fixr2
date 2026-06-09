@@ -12,19 +12,16 @@ public class EstatisticasAnuncioController {
 
     private final EstatisticasAnuncioService service;
 
-    // Cria estatísticas para um anúncio
     @PostMapping("/{anuncioId}")
     public EstatisticasAnuncioDTO criar(@PathVariable Long anuncioId) {
         return service.criar(anuncioId);
     }
 
-    // Busca estatísticas de um anúncio
     @GetMapping("/{anuncioId}")
     public EstatisticasAnuncioDTO buscar(@PathVariable Long anuncioId) {
         return service.buscarPorAnuncio(anuncioId);
     }
 
-    // Registra visualização — ?unica=true para visualização única
     @PostMapping("/{anuncioId}/visualizacao")
     public EstatisticasAnuncioDTO registrarVisualizacao(
             @PathVariable Long anuncioId,
@@ -32,7 +29,6 @@ public class EstatisticasAnuncioController {
         return service.registrarVisualizacao(anuncioId, unica);
     }
 
-    // Registra clique no anúncio
     @PostMapping("/{anuncioId}/clique")
     public EstatisticasAnuncioDTO registrarClique(@PathVariable Long anuncioId) {
         return service.registrarClique(anuncioId);

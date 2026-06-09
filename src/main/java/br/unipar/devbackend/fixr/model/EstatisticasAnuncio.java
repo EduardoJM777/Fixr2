@@ -21,7 +21,6 @@ public class EstatisticasAnuncio {
     private Integer visualizacoesTotais = 0;
     private Integer rankingPosicao = 0;
 
-    // CTR calculado: (cliques / visualizacoesTotais) * 100
     public Double calcularCTR() {
         if (visualizacoesTotais == null || visualizacoesTotais == 0) return 0.0;
         return (cliques.doubleValue() / visualizacoesTotais.doubleValue()) * 100;
