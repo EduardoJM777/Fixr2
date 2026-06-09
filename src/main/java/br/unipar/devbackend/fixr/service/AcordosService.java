@@ -11,10 +11,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class AcordosService {
     @Autowired
@@ -40,11 +42,12 @@ public class AcordosService {
         return repository.save(acordos);
     }
 
+    @Transactional
     public void iniciarAcordo(Long chatId, Double valor, Long iniciadorId,
                               String iniciadorNome, String papel) {
         Chats chat = chatsRepository.getReferenceById(chatId);
 
-        // cancela acordo anterior se existir
+
         repository.findTopByChatsIdOrderByIdDesc(chatId).ifPresent(a -> {
             if (a.getStatusAcordo() == StatusAcordo.ATIVO) {
                 a.setStatusAcordo(StatusAcordo.CANCELADO);
@@ -58,7 +61,7 @@ public class AcordosService {
         acordo.setStatusAcordo(StatusAcordo.ATIVO);
         repository.save(acordo);
 
-        // descobre o destinatário
+
         Long destinatarioId = papel.equals("CLIENTE")
                 ? chat.getPrestador().getId()
                 : chat.getCliente().getId();
@@ -75,7 +78,7 @@ public class AcordosService {
                 )
         );
 
-        // notifica o próprio iniciador (confirmação)
+
         messagingTemplate.convertAndSend(
                 "/topic/usuario/" + iniciadorId + "/acordo", (Object)
                 Map.of(
@@ -87,6 +90,7 @@ public class AcordosService {
         );
     }
 
+    @Transactional
     public void contraproposta(Long acordoId, Double valor, Long usuarioId) {
         Acordos acordo = repository.findById(acordoId)
                 .orElseThrow(() -> new RuntimeException("Acordo não encontrado"));
@@ -108,6 +112,7 @@ public class AcordosService {
         );
     }
 
+    @Transactional
     public void aceitarAcordo(Long acordoId, Long usuarioId) {
         Acordos acordo = repository.findById(acordoId)
                 .orElseThrow(() -> new RuntimeException("Acordo não encontrado"));
@@ -129,6 +134,7 @@ public class AcordosService {
         messagingTemplate.convertAndSend("/topic/usuario/" + outroId + "/acordo", (Object) payload);
     }
 
+    @Transactional
     public void cancelarAcordo(Long acordoId) {
         Acordos acordo = repository.findById(acordoId)
                 .orElseThrow(() -> new RuntimeException("Acordo não encontrado"));
@@ -144,8 +150,10 @@ public class AcordosService {
         messagingTemplate.convertAndSend("/topic/usuario/" + prestadorId + "/acordo", (Object) payload);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Acordos> buscarPorChatId(Long chatId) {
-        return repository.findTopByChatsIdOrderByIdDesc(chatId);
+        List<Acordos> lista = repository.findByChatsIdOrdenado(chatId);
+        return lista.isEmpty() ? Optional.empty() : Optional.of(lista.get(0));
     }
 
     public List<Acordos> listar(){ return repository.findAll();}

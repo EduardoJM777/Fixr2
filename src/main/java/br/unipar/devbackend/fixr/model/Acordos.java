@@ -22,7 +22,8 @@ public class Acordos {
     @Enumerated(EnumType.STRING)
     private StatusAcordo statusAcordo;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "chats_id")
     private Chats chats;
 
     private Boolean ativo = true;
