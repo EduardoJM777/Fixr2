@@ -1,5 +1,6 @@
 package br.unipar.devbackend.fixr.dto;
 
+import br.unipar.devbackend.fixr.model.StatusAnuncio;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -15,8 +16,9 @@ public record AnuncioRequestDTO(
         @NotNull
         Long profissaoId,
 
-
         @Positive
-        Long clienteId
+        Long clienteId,
+
+        StatusAnuncio statusAnuncio
 
 ) {}

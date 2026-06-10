@@ -16,4 +16,5 @@ public class Favoritos {
 
     @ManyToOne
     private Usuario favoritado;
+
 }

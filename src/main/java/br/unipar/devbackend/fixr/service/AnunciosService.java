@@ -6,6 +6,8 @@ import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
 import br.unipar.devbackend.fixr.dto.AnuncioRequestDTO;
 import br.unipar.devbackend.fixr.dto.AnuncioResponseDTO;
 import br.unipar.devbackend.fixr.model.Anuncios;
+import br.unipar.devbackend.fixr.model.Profissao;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,21 +55,22 @@ public class AnunciosService {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Anúncio não encontrado"));
     }
 
-//    public Anuncios atualizar(Long id, AnuncioDTO anuncioDTOAtualizado){
-//        return repository.findById(id).map(anuncios -> {
-//
-//            anuncios.setDescricao(anuncioDTOAtualizado.descricao());
-//            Profissao profissao = proRepository.getReferenceById(anuncioDTOAtualizado.idProfissao());
-//            anuncios.setProfissao(profissao);
-//
-//            if (anuncioDTOAtualizado.idCliente() != null) {
-//                Cliente cliente = clienteRepository.getReferenceById(anuncioDTOAtualizado.idCliente());
-//                anuncios.setCliente(cliente);
-//            }
-//
-//            return repository.save(anuncios);
-//        }).orElseThrow(() -> new RuntimeException("Anúncio não encontrado."));
-//    }
+    public AnuncioResponseDTO atualizar(Long id, AnuncioRequestDTO dto){
+        Anuncios anuncio = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Anúncio não encontrado: " + id));
+
+        Profissao profissao = proRepository.findById(dto.profissaoId())
+                .orElseThrow(() -> new EntityNotFoundException("Profissão não encontrada: " + dto.profissaoId()));
+
+        anuncio.setDescricao(dto.descricao());
+        anuncio.setProfissao(profissao);
+
+        if (dto.statusAnuncio() != null) {
+            anuncio.setStatusAnuncio(dto.statusAnuncio());
+        }
+
+        return toDTO(repository.save(anuncio));
+    }
 
     public void deletar(Long id){repository.deleteById(id);
     }
@@ -81,8 +84,13 @@ public class AnunciosService {
                 anuncios.getImagemTipo(),
                 anuncios.getProfissao().getId(), anuncios.getProfissao().getNome(),
                 anuncios.getCliente().getId(), anuncios.getCliente().getNome(),
-                "/anuncio/" + anuncios.getId() + "/imagem"
+                "/anuncio/" + anuncios.getId() + "/imagem",
+                anuncios.getStatusAnuncio()
         );
+    }
+
+    public AnuncioResponseDTO buscarPorIdDTO(Long id){
+        return toDTO(buscarPorId(id));
     }
 
     @Transactional

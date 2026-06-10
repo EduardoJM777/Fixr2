@@ -19,10 +19,8 @@ public class EstatisticasPrestador {
     @JoinColumn(name = "prestador_id", nullable = false)
     private Prestador prestador;
 
-    // TODO: alimentar via evento ou query
     private Integer avaliacoesRecebidas = 0;
 
-    // TODO: alimentar via evento ou query
     private Integer trabalhosRealizados = 0;
 
     private Integer rankingPosicao = 0;

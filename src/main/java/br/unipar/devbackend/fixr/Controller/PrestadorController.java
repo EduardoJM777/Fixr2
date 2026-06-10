@@ -5,7 +5,6 @@ import br.unipar.devbackend.fixr.dto.PrestadorDTO;
 import br.unipar.devbackend.fixr.model.Prestador;
 import br.unipar.devbackend.fixr.service.PrestadorService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -20,10 +20,8 @@ public class Estatisticas {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
-    // TODO: definir como será alimentado (evento ou query)
     private Integer avaliacoesRecebidas = 0;
 
-    // TODO: definir como será alimentado (evento ou query)
     private Integer anunciosPublicados = 0;
 
     private Integer rankingPosicao = 0;

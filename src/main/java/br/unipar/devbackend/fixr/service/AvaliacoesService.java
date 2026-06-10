@@ -52,6 +52,14 @@ public class AvaliacoesService {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Avaliação não encontrada."));
     }
 
+    public List<Avaliacoes> listarPorPrestador(Long id) {
+        return repository.findByPrestadorId(id);
+    }
+
+    public List<Avaliacoes> listarPorCliente(Long id) {
+        return repository.findByClienteId(id);
+    }
+
     public Avaliacoes atualizar(Long id, AvaliacoesDTO avaliacoesDTOatualizado){
         return repository.findById(id).map(avaliacoes -> {
             avaliacoes.setNota(avaliacoesDTOatualizado.nota());
@@ -69,7 +77,6 @@ public class AvaliacoesService {
     }
 
     public void deletar(Long id){
-
         Avaliacoes avaliacoes = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Avaliacao não encontrada"));
 
