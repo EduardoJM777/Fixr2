@@ -4,6 +4,7 @@ import br.unipar.devbackend.fixr.dto.ChatsDTO;
 import br.unipar.devbackend.fixr.dto.MensagensDTO;
 import br.unipar.devbackend.fixr.model.Chats;
 import br.unipar.devbackend.fixr.model.Mensagens;
+import br.unipar.devbackend.fixr.service.AcordosService;
 import br.unipar.devbackend.fixr.service.ChatsService;
 import jakarta.validation.Valid;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,9 +22,11 @@ import java.util.Map;
 public class ChatsController {
 
     private final ChatsService chatsService;
+    private final AcordosService acordosService;
 
-    public ChatsController(ChatsService chatsService) {
+    public ChatsController(ChatsService chatsService, AcordosService acordosService) {
         this.chatsService = chatsService;
+        this.acordosService = acordosService;
     }
 
 
@@ -111,5 +114,39 @@ public class ChatsController {
     public void encerrarChatWs(@Payload Map<String, Object> payload) {
         Long chatId = Long.valueOf(payload.get("chatId").toString());
         chatsService.encerrarChat(chatId);
+    }
+
+    // Adiciona no ChatsController.java, junto aos outros @MessageMapping:
+
+    @MessageMapping("/acordo.iniciar")
+    public void iniciarAcordoWs(@Payload Map<String, Object> payload) {
+        System.out.println("ACORDO INICIAR RECEBIDO: " + payload);
+        Long chatId = Long.valueOf(payload.get("chatId").toString());
+        Double valor = Double.valueOf(payload.get("valor").toString());
+        Long iniciadorId = Long.valueOf(payload.get("iniciadorId").toString());
+        String iniciadorNome = payload.get("iniciadorNome").toString();
+        String papel = payload.get("papel").toString();
+        acordosService.iniciarAcordo(chatId, valor, iniciadorId, iniciadorNome, papel);
+    }
+
+    @MessageMapping("/acordo.contraproposta")
+    public void contraPropostaWs(@Payload Map<String, Object> payload) {
+        Long acordoId = Long.valueOf(payload.get("acordoId").toString());
+        Double valor = Double.valueOf(payload.get("valor").toString());
+        Long usuarioId = Long.valueOf(payload.get("usuarioId").toString());
+        acordosService.contraproposta(acordoId, valor, usuarioId);
+    }
+
+    @MessageMapping("/acordo.aceitar")
+    public void aceitarAcordoWs(@Payload Map<String, Object> payload) {
+        Long acordoId = Long.valueOf(payload.get("acordoId").toString());
+        Long usuarioId = Long.valueOf(payload.get("usuarioId").toString());
+        acordosService.aceitarAcordo(acordoId, usuarioId);
+    }
+
+    @MessageMapping("/acordo.cancelar")
+    public void cancelarAcordoWs(@Payload Map<String, Object> payload) {
+        Long acordoId = Long.valueOf(payload.get("acordoId").toString());
+        acordosService.cancelarAcordo(acordoId);
     }
 }
