@@ -1,5 +1,6 @@
 package br.unipar.devbackend.fixr.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.SQLRestriction;
@@ -11,12 +12,12 @@ import java.time.LocalDateTime;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @SQLRestriction("ativo = true")
-//@table
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public abstract class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String nome;
 
@@ -36,5 +37,9 @@ public abstract class Usuario {
     private UserType userType;
 
     private Boolean ativo = true;
+
+    private String foto;
+
+    private Boolean online;
 
 }

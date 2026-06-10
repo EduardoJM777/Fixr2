@@ -5,17 +5,25 @@ import lombok.Data;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Data
 @Entity
+@Table(name = "anuncios")
 @SQLRestriction("ativo = true")
 public class Anuncios {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    private String titulo;
+    @JsonIgnore
+    @Lob
+    @Column(name = "imagem", columnDefinition = "OID")
+    private byte[] imagem;
+    private String imagemTipo;
+
     private String descricao;
     private LocalDateTime dataPublicacao = LocalDateTime.now();
 

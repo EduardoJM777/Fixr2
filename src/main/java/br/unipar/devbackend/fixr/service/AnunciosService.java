@@ -2,13 +2,18 @@ package br.unipar.devbackend.fixr.service;
 
 import br.unipar.devbackend.fixr.Repository.AnunciosRepository;
 import br.unipar.devbackend.fixr.Repository.ClienteRepository;
-import br.unipar.devbackend.fixr.dto.AnuncioDTO;
+import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
+import br.unipar.devbackend.fixr.dto.AnuncioRequestDTO;
+import br.unipar.devbackend.fixr.dto.AnuncioResponseDTO;
 import br.unipar.devbackend.fixr.model.Anuncios;
-import br.unipar.devbackend.fixr.model.Cliente;
+import br.unipar.devbackend.fixr.model.Profissao;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -16,53 +21,83 @@ public class AnunciosService {
 
     private final AnunciosRepository repository;
     private final ClienteRepository clienteRepository;
+    private final ProfissaoRepository proRepository;
 
     @Autowired
-    public AnunciosService(AnunciosRepository repository, ClienteRepository clienteRepository){
+    public AnunciosService(AnunciosRepository repository, ProfissaoRepository proRepository,
+                           ClienteRepository clienteRepository){
         this.repository = repository;
         this.clienteRepository = clienteRepository;
+        this.proRepository = proRepository;
     }
 
-    public Anuncios cadastrar(AnuncioDTO anuncioDTO){
+    public AnuncioResponseDTO cadastrar(AnuncioRequestDTO dto,
+                                        MultipartFile imagem) throws IOException {
         Anuncios anuncios = new Anuncios();
-        anuncios.setTitulo(anuncioDTO.titulo());
-        anuncios.setDescricao(anuncioDTO.descricao());
-        anuncios.setProfissao(anuncioDTO.profissao());
+        anuncios.setDescricao(dto.descricao());
+        anuncios.setImagem(imagem.getBytes());
+        anuncios.setImagemTipo(imagem.getContentType());
+        anuncios.setProfissao(proRepository.findById(dto.profissaoId()).orElseThrow());
+        anuncios.setCliente(clienteRepository.findById(dto.clienteId()).orElseThrow());
 
-        Cliente cliente = clienteRepository.getReferenceById(anuncioDTO.idCliente());
-        anuncios.setCliente(cliente);
+        Anuncios salvo = repository.save(anuncios);
 
-        return repository.save(anuncios);
+        return toDTO(salvo);
     }
 
-    public List<Anuncios> listar(){
-        return repository.findAll();
+    public List<AnuncioResponseDTO> listar(){
+        return repository.findAll().stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     public Anuncios buscarPorId(Long id){
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Anúncio não encontrado"));
     }
 
-    public Anuncios atualizar(Long id, AnuncioDTO anuncioDTOAtualizado){
-        return repository.findById(id).map(anuncios -> {
+    public AnuncioResponseDTO atualizar(Long id, AnuncioRequestDTO dto){
+        Anuncios anuncio = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Anúncio não encontrado: " + id));
 
-            Cliente cliente = clienteRepository.getReferenceById(anuncioDTOAtualizado.idCliente());
-            anuncios.setCliente(cliente);
+        Profissao profissao = proRepository.findById(dto.profissaoId())
+                .orElseThrow(() -> new EntityNotFoundException("Profissão não encontrada: " + dto.profissaoId()));
 
-            anuncios.setTitulo(anuncioDTOAtualizado.titulo());
-            anuncios.setDescricao(anuncioDTOAtualizado.descricao());
-            anuncios.setProfissao(anuncioDTOAtualizado.profissao());
-            return repository.save(anuncios);
-        }).orElseThrow(() -> new RuntimeException("Anúncio não encontrado."));
+        anuncio.setDescricao(dto.descricao());
+        anuncio.setProfissao(profissao);
+
+        if (dto.statusAnuncio() != null) {
+            anuncio.setStatusAnuncio(dto.statusAnuncio());
+        }
+
+        return toDTO(repository.save(anuncio));
     }
 
-    public void deletar(Long id){
-        Anuncios anuncios = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Anuncio não encontrado"));
+    public void deletar(Long id){repository.deleteById(id);
+    }
 
-        anuncios.setAtivo(false);
 
-        repository.save(anuncios);
+
+    private AnuncioResponseDTO toDTO(Anuncios anuncios){
+        return new AnuncioResponseDTO(
+                anuncios.getId(),
+                anuncios.getDescricao(),
+                anuncios.getImagemTipo(),
+                anuncios.getProfissao().getId(), anuncios.getProfissao().getNome(),
+                anuncios.getCliente().getId(), anuncios.getCliente().getNome(),
+                "/anuncio/" + anuncios.getId() + "/imagem",
+                anuncios.getStatusAnuncio()
+        );
+    }
+
+    public AnuncioResponseDTO buscarPorIdDTO(Long id){
+        return toDTO(buscarPorId(id));
+    }
+
+    @Transactional
+    public List<AnuncioResponseDTO> listarPorCliente(Long clienteId) {
+        return repository.findByClienteId(clienteId).stream()
+                .map(this::toDTO)
+                .toList();
     }
 
 }

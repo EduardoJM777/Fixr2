@@ -1,7 +1,7 @@
 package br.unipar.devbackend.fixr.Controller;
 
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
-import br.unipar.devbackend.fixr.dto.LoginDTO;
+import br.unipar.devbackend.fixr.dto.EstatisticasDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
 import br.unipar.devbackend.fixr.service.ClienteService;
 import jakarta.validation.Valid;
@@ -26,11 +26,6 @@ public class ClienteController {
         return clienteService.cadastrar(clienteDTO);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody LoginDTO dto) {
-        return ResponseEntity.ok(clienteService.login(dto));
-    }
-
     @PutMapping("/{id}")
     public Cliente atualizar(@PathVariable Long id, @Valid @RequestBody ClienteDTO clienteDTO){
         return clienteService.atualizar(id, clienteDTO);
@@ -49,6 +44,11 @@ public class ClienteController {
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id){
         clienteService.deletar(id);
+    }
+
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<EstatisticasDTO> getEstatisticas(@PathVariable Long id) {
+        return ResponseEntity.ok(clienteService.buscarEstatisticas(id));
     }
 
 }

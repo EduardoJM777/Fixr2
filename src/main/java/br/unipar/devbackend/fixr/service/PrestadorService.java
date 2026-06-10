@@ -1,12 +1,17 @@
 package br.unipar.devbackend.fixr.service;
 
+import br.unipar.devbackend.fixr.Repository.AvaliacoesRepository;
+import br.unipar.devbackend.fixr.Repository.EstatisticasPrestadorRepository;
 import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
 import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
-import br.unipar.devbackend.fixr.dto.LoginDTO;
+import br.unipar.devbackend.fixr.dto.EstatisticasPrestadorDTO;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
+import br.unipar.devbackend.fixr.model.Avaliacoes;
+import br.unipar.devbackend.fixr.model.EstatisticasPrestador;
 import br.unipar.devbackend.fixr.model.Prestador;
 import br.unipar.devbackend.fixr.model.Profissao;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -15,11 +20,20 @@ public class PrestadorService {
 
     private final PrestadorRepository repository;
     private final ProfissaoRepository profissaoRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EstatisticasPrestadorRepository estatisticasPrestadorRepository;
+    private final AvaliacoesRepository avaliacoesRepository;
 
     public PrestadorService(PrestadorRepository repository,
-                            ProfissaoRepository profissaoRepository) {
+                            ProfissaoRepository profissaoRepository,
+                            PasswordEncoder passwordEncoder,
+                            EstatisticasPrestadorRepository estatisticasPrestadorRepository,
+                            AvaliacoesRepository avaliacoesRepository) {
         this.repository = repository;
         this.profissaoRepository = profissaoRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.estatisticasPrestadorRepository = estatisticasPrestadorRepository;
+        this.avaliacoesRepository = avaliacoesRepository;
     }
 
 
@@ -29,26 +43,23 @@ public class PrestadorService {
         prestador.setNome(dto.nome());
         prestador.setEmail(dto.email());
         prestador.setDataNascimento(dto.dataNascimento());
-        prestador.setSenhaHash(dto.senha());
+        prestador.setSenhaHash(passwordEncoder.encode(dto.senha()));
         prestador.setTelefone(dto.telefone());
 
-//        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
-//                .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
-//
-//        prestador.setProfissao(profissao);
+        Profissao profissao = profissaoRepository.findById(dto.profissaoId())
+                .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
 
-        return repository.save(prestador);
+        prestador.setProfissao(profissao);
+
+        Prestador prestadorSalvo = repository.save(prestador);
+
+
+        EstatisticasPrestador stats = new EstatisticasPrestador();
+        stats.setPrestador(prestadorSalvo);
+        estatisticasPrestadorRepository.save(stats);
+
+        return prestadorSalvo;
     }
-
-    public boolean login(LoginDTO dto){
-        Prestador prestador = repository.findByEmail(dto.getEmail()).orElse(null);
-
-        if (prestador != null && prestador.getSenhaHash().equals(dto.getSenha())) {
-            return true;
-        }
-        return false;
-    }
-
 
     public List<Prestador> listar(){
         return repository.findAll();
@@ -65,13 +76,16 @@ public class PrestadorService {
             prestador.setNome(dto.nome());
             prestador.setEmail(dto.email());
             prestador.setDataNascimento(dto.dataNascimento());
-            prestador.setSenhaHash(dto.senha());
             prestador.setTelefone(dto.telefone());
 
-//            Profissao profissao = profissaoRepository.findById(dto.profissaoId())
-//                    .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
-//
-//            prestador.setProfissao(profissao);
+            Profissao profissao = profissaoRepository.findById(dto.profissaoId())
+                    .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
+
+            if (dto.senha() != null && !dto.senha().isBlank()) {
+                prestador.setSenhaHash(passwordEncoder.encode(dto.senha()));
+            }
+
+            prestador.setProfissao(profissao);
 
             return repository.save(prestador);
 
@@ -88,4 +102,36 @@ public class PrestadorService {
 
         repository.save(prestador);
     }
+
+
+    public EstatisticasPrestadorDTO buscarEstatisticas(Long prestadorId) {
+
+        EstatisticasPrestador stats = estatisticasPrestadorRepository.findByPrestadorId(prestadorId)
+                .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o prestador " + prestadorId));
+
+        Double ultimaNota = avaliacoesRepository
+                .findTopByPrestadorIdOrderByDataDesc(prestadorId)
+                .map(Avaliacoes::getNota)
+                .orElse(null);
+
+        long totalAvaliacoes = avaliacoesRepository.countByPrestadorId(prestadorId);
+
+        return new EstatisticasPrestadorDTO(
+                (int) totalAvaliacoes,
+                stats.getTrabalhosRealizados(),
+                stats.getTempoNoApp(),
+                stats.getRankingPosicao(),
+                stats.getPrecoMedio(),
+                stats.getExperienciaTrabalho(),
+                ultimaNota
+        );
+    }
+
+    public void atualizarExperiencia(Long prestadorId, String experiencia){
+        EstatisticasPrestador stats = estatisticasPrestadorRepository.findByPrestadorId(prestadorId)
+                .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas"));
+        stats.setExperienciaTrabalho(experiencia);
+        estatisticasPrestadorRepository.save(stats);
+    }
+
 }

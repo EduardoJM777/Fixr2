@@ -1,11 +1,16 @@
 package br.unipar.devbackend.fixr.service;
 
+import br.unipar.devbackend.fixr.Repository.AnunciosRepository;
+import br.unipar.devbackend.fixr.Repository.AvaliacoesRepository;
 import br.unipar.devbackend.fixr.Repository.ClienteRepository;
+import br.unipar.devbackend.fixr.Repository.EstatisticasRepository;
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
-import br.unipar.devbackend.fixr.dto.LoginDTO;
+import br.unipar.devbackend.fixr.dto.EstatisticasDTO;
 import br.unipar.devbackend.fixr.model.Cliente;
+import br.unipar.devbackend.fixr.model.Estatisticas;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +19,22 @@ import java.util.List;
 public class ClienteService {
 
     private final ClienteRepository repository;
+    private final PasswordEncoder passwordEncoder;
+    private final EstatisticasRepository estatisticasRepository;
+    private final AvaliacoesRepository avaliacoesRepository;
+    private final AnunciosRepository anunciosRepository;
 
     @Autowired
-    public ClienteService(ClienteRepository repository){
+    public ClienteService(ClienteRepository repository,
+                          PasswordEncoder passwordEncoder,
+                          EstatisticasRepository estatisticasRepository,
+                          AvaliacoesRepository avaliacoesRepository,
+                          AnunciosRepository anunciosRepository){
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
+        this.estatisticasRepository = estatisticasRepository;
+        this.avaliacoesRepository = avaliacoesRepository;
+        this.anunciosRepository = anunciosRepository;
     }
 
     public Cliente cadastrar(ClienteDTO clienteDTO){
@@ -25,18 +42,16 @@ public class ClienteService {
         cliente.setNome(clienteDTO.nome());
         cliente.setEmail(clienteDTO.email());
         cliente.setDataNascimento(clienteDTO.dataNascimento());
-        cliente.setSenhaHash(clienteDTO.senha());
+        cliente.setSenhaHash(passwordEncoder.encode(clienteDTO.senha()));
         cliente.setTelefone(clienteDTO.telefone());
-        return repository.save(cliente);
-    }
 
+        Cliente clienteSalvo = repository.save(cliente);
 
-    public boolean login(LoginDTO dto) {
-        Cliente cliente = repository.findByEmail(dto.getEmail()).orElse(null);
-        if (cliente != null && cliente.getSenhaHash().equals(dto.getSenha())) {
-            return true;
-        }
-        return false;
+        Estatisticas stats = new Estatisticas();
+        stats.setCliente(clienteSalvo);
+        estatisticasRepository.save(stats);
+
+        return clienteSalvo;
     }
 
     public List<Cliente> listar(){
@@ -48,14 +63,21 @@ public class ClienteService {
     }
 
     public Cliente atualizar(Long id, ClienteDTO clienteDTOAtualizado){
-        return repository.findById(id).map(cliente -> {
-            cliente.setNome(clienteDTOAtualizado.nome());
-            cliente.setEmail(clienteDTOAtualizado.email());
-            cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
-            cliente.setSenhaHash(clienteDTOAtualizado.senha());
-            cliente.setTelefone(clienteDTOAtualizado.telefone());
-            return repository.save(cliente);
-        }).orElseThrow(() -> new RuntimeException("Erro"));
+
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+
+        cliente.setNome(clienteDTOAtualizado.nome());
+        cliente.setEmail(clienteDTOAtualizado.email());
+        cliente.setTelefone(clienteDTOAtualizado.telefone());
+        cliente.setDataNascimento(clienteDTOAtualizado.dataNascimento());
+
+        if (clienteDTOAtualizado.senha() != null && !clienteDTOAtualizado.senha().isBlank()) {
+            cliente.setSenhaHash(passwordEncoder.encode(clienteDTOAtualizado.senha()));
+        }
+
+        return repository.save(cliente);
+
     }
 
     public void deletar(Long id){
@@ -67,5 +89,27 @@ public class ClienteService {
 
         repository.save(cliente);
     }
+
+    public EstatisticasDTO buscarEstatisticas(Long clienteId){
+        Estatisticas stats = estatisticasRepository.findByClienteId(clienteId)
+                .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o cliente " + clienteId));
+
+        long totalAvaliacoes = avaliacoesRepository.countByClienteId(clienteId);
+        long totalAnuncios = anunciosRepository.countByClienteId(clienteId);
+
+        return new EstatisticasDTO(
+                (int) totalAvaliacoes,
+                (int) totalAnuncios,
+                stats.getTempoNoApp(),
+                stats.getRankingPosicao(),
+                stats.getPrecoMedio()
+        );
+    }
+
+
+
+
+
+
 
 }

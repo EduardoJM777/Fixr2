@@ -18,10 +18,10 @@ public class ProfissaoService {
     }
 
     public Profissao cadastrar(ProfissaoDTO profissaoDTO){
-    Profissao profissao = new Profissao();
-    profissao.setNome(profissaoDTO.nome());
-    profissao.setDescricao(profissaoDTO.descricao());
-    return repository.save(profissao);
+        Profissao profissao = new Profissao();
+        profissao.setNome(profissaoDTO.nome());
+        profissao.setDescricao(profissaoDTO.descricao());
+        return repository.save(profissao);
     }
 
     public List<Profissao> findAll(){
