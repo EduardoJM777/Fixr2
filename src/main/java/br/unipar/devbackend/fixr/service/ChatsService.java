@@ -234,4 +234,6 @@ public class ChatsService {
     public List<Chats> listarPorPrestador(Long prestadorId) {
         return chatsRepository.findByPrestadorIdAndStatus(prestadorId, Chats.StatusChat.ATIVO);
     }
+
+
 }

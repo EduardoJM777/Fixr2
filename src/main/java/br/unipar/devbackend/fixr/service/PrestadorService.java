@@ -30,13 +30,14 @@ public class PrestadorService {
     private final EmailService emailService;
     private final UsuarioRepository  usuarioRepository;
     private final AcordosRepository acordosRepository;
+    private final ChatsRepository chatsRepository;
 
     public PrestadorService(PrestadorRepository repository,
                             ProfissaoRepository profissaoRepository,
                             PasswordEncoder passwordEncoder,
                             EstatisticasPrestadorRepository estatisticasPrestadorRepository,
                             AvaliacoesRepository avaliacoesRepository,
-                            EmailService emailService, UsuarioRepository usuarioRepository, AcordosRepository acordosRepository) {
+                            EmailService emailService, UsuarioRepository usuarioRepository, AcordosRepository acordosRepository, ChatsRepository chatsRepository) {
         this.repository = repository;
         this.profissaoRepository = profissaoRepository;
         this.passwordEncoder = passwordEncoder;
@@ -45,6 +46,7 @@ public class PrestadorService {
         this.emailService = emailService;
         this.usuarioRepository = usuarioRepository;
         this.acordosRepository = acordosRepository;
+        this.chatsRepository = chatsRepository;
     }
 
 
@@ -126,13 +128,19 @@ public class PrestadorService {
     }
 
 
-    public void deletar(Long id){
-
+    public void deletar(Long id) {
         Prestador prestador = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Prestador não encontrado"));
 
-        prestador.setAtivo(false);
+        chatsRepository.findByPrestadorIdAndStatus(id, Chats.StatusChat.ATIVO)
+                .forEach(chat -> {
+                    chat.setStatus(Chats.StatusChat.ENCERRADO);
+                    chat.setAtivo(false);
+                    chatsRepository.save(chat);
+                });
 
+        prestador.setAtivo(false);
+        prestador.setEmail("deleted_" + id + "_" + prestador.getEmail());
         repository.save(prestador);
     }
 

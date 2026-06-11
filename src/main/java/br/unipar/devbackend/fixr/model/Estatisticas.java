@@ -24,8 +24,6 @@ public class Estatisticas {
 
     private Integer anunciosPublicados = 0;
 
-    private Integer rankingPosicao = 0;
-
     private BigDecimal precoMedio = BigDecimal.ZERO;
 
 

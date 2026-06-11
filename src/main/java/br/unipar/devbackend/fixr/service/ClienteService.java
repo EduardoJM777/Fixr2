@@ -3,6 +3,7 @@ package br.unipar.devbackend.fixr.service;
 import br.unipar.devbackend.fixr.Repository.*;
 import br.unipar.devbackend.fixr.dto.ClienteDTO;
 import br.unipar.devbackend.fixr.dto.EstatisticasDTO;
+import br.unipar.devbackend.fixr.model.Chats;
 import br.unipar.devbackend.fixr.model.Cliente;
 import br.unipar.devbackend.fixr.model.Estatisticas;
 import br.unipar.devbackend.fixr.model.UserType;
@@ -34,6 +35,7 @@ public class ClienteService {
     private final EmailService emailService;
     private final UsuarioRepository usuarioRepository;
     private final AcordosRepository acordosRepository;
+    private final ChatsRepository chatsRepository;
 
     @Autowired
     public ClienteService(ClienteRepository repository,
@@ -41,7 +43,7 @@ public class ClienteService {
                           EstatisticasRepository estatisticasRepository,
                           AvaliacoesRepository avaliacoesRepository,
                           AnunciosRepository anunciosRepository,
-                          EmailService emailService, UsuarioRepository usuarioRepository, AcordosRepository acordosRepository) {
+                          EmailService emailService, UsuarioRepository usuarioRepository, AcordosRepository acordosRepository, ChatsRepository chatsRepository) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.estatisticasRepository = estatisticasRepository;
@@ -50,6 +52,7 @@ public class ClienteService {
         this.emailService = emailService;
         this.usuarioRepository = usuarioRepository;
         this.acordosRepository = acordosRepository;
+        this.chatsRepository = chatsRepository;
     }
 
     public Cliente cadastrar(ClienteDTO clienteDTO){
@@ -117,13 +120,19 @@ public class ClienteService {
         repository.save(cliente);
     }
 
-    public void deletar(Long id){
-
+    public void deletar(Long id) {
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
 
-        cliente.setAtivo(false);
+        chatsRepository.findByClienteIdAndStatus(id, Chats.StatusChat.ATIVO)
+                .forEach(chat -> {
+                    chat.setStatus(Chats.StatusChat.ENCERRADO);
+                    chat.setAtivo(false);
+                    chatsRepository.save(chat);
+                });
 
+        cliente.setAtivo(false);
+        cliente.setEmail("deleted_" + id + "_" + cliente.getEmail());
         repository.save(cliente);
     }
 

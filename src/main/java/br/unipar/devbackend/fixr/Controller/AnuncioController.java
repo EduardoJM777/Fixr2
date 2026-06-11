@@ -51,6 +51,7 @@ public class AnuncioController {
         return anuncioservice.listarPublicados();
     }
 
+
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id){
         anuncioservice.deletar(id);

@@ -49,6 +49,7 @@ public class AnunciosService {
     public List<AnuncioResponseDTO> listar(){
         return repository.findAll().stream()
                 .map(this::toDTO)
+                .filter(dto -> dto != null)
                 .toList();
     }
 
@@ -56,6 +57,7 @@ public class AnunciosService {
     public List<AnuncioResponseDTO> listarPublicados() {
         return repository.findByStatusAnuncio(StatusAnuncio.PUBLICADO).stream()
                 .map(this::toDTO)
+                .filter(dto -> dto != null)
                 .toList();
     }
 
@@ -86,6 +88,8 @@ public class AnunciosService {
 
 
     private AnuncioResponseDTO toDTO(Anuncios anuncios){
+        if (anuncios.getCliente() == null) return null;
+
         return new AnuncioResponseDTO(
                 anuncios.getId(),
                 anuncios.getDescricao(),
@@ -105,7 +109,9 @@ public class AnunciosService {
     public List<AnuncioResponseDTO> listarPorCliente(Long clienteId) {
         return repository.findByClienteId(clienteId).stream()
                 .map(this::toDTO)
+                .filter(dto -> dto != null)
                 .toList();
     }
+
 
 }
