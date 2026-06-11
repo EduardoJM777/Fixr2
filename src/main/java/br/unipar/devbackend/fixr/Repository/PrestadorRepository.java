@@ -15,13 +15,13 @@ public interface PrestadorRepository extends JpaRepository<Prestador, Long> {
     Optional<Profissao> findByNome(String nome);
 
     @Query(value = """
-        SELECT u.id, u.nome, u.email, u.senha_hash, u.data_cadastro,
-               u.data_nascimento, u.telefone, u.user_type, u.ativo,
-               p.profissao_id, u.foto, u.online
-        FROM prestador p
-        INNER JOIN usuario u ON p.id = u.id
-        WHERE u.email = :email        
-        """, nativeQuery = true)
+    SELECT u.id, u.nome, u.email, u.senha_hash, u.data_cadastro,
+           u.data_nascimento, u.telefone, u.user_type, u.ativo,
+           p.profissao_id, u.foto, u.online, u.email_confirmado, u.token_confirmacao
+    FROM prestador p
+    INNER JOIN usuario u ON p.id = u.id
+    WHERE u.email = :email        
+    """, nativeQuery = true)
     Optional<Prestador> findByEmail(@Param("email") String email);
 
 }

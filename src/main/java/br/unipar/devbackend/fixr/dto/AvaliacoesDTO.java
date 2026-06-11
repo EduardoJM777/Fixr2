@@ -1,5 +1,6 @@
 package br.unipar.devbackend.fixr.dto;
 
+import br.unipar.devbackend.fixr.model.UserType;
 import jakarta.validation.constraints.*;
 
 public record AvaliacoesDTO (
@@ -20,7 +21,9 @@ public record AvaliacoesDTO (
 
         @NotNull
         @Positive
-        Long idPrestador
+        Long idPrestador,
+
+        UserType avaliadorTipo
 
 )
 {}

@@ -1,19 +1,23 @@
 package br.unipar.devbackend.fixr.service;
 
-import br.unipar.devbackend.fixr.Repository.AvaliacoesRepository;
-import br.unipar.devbackend.fixr.Repository.EstatisticasPrestadorRepository;
-import br.unipar.devbackend.fixr.Repository.PrestadorRepository;
-import br.unipar.devbackend.fixr.Repository.ProfissaoRepository;
+import br.unipar.devbackend.fixr.Repository.*;
 import br.unipar.devbackend.fixr.dto.EstatisticasPrestadorDTO;
 import br.unipar.devbackend.fixr.dto.PrestadorDTO;
-import br.unipar.devbackend.fixr.model.Avaliacoes;
-import br.unipar.devbackend.fixr.model.EstatisticasPrestador;
-import br.unipar.devbackend.fixr.model.Prestador;
-import br.unipar.devbackend.fixr.model.Profissao;
+import br.unipar.devbackend.fixr.model.*;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PrestadorService {
@@ -23,21 +27,31 @@ public class PrestadorService {
     private final PasswordEncoder passwordEncoder;
     private final EstatisticasPrestadorRepository estatisticasPrestadorRepository;
     private final AvaliacoesRepository avaliacoesRepository;
+    private final EmailService emailService;
+    private final UsuarioRepository  usuarioRepository;
+    private final AcordosRepository acordosRepository;
 
     public PrestadorService(PrestadorRepository repository,
                             ProfissaoRepository profissaoRepository,
                             PasswordEncoder passwordEncoder,
                             EstatisticasPrestadorRepository estatisticasPrestadorRepository,
-                            AvaliacoesRepository avaliacoesRepository) {
+                            AvaliacoesRepository avaliacoesRepository,
+                            EmailService emailService, UsuarioRepository usuarioRepository, AcordosRepository acordosRepository) {
         this.repository = repository;
         this.profissaoRepository = profissaoRepository;
         this.passwordEncoder = passwordEncoder;
         this.estatisticasPrestadorRepository = estatisticasPrestadorRepository;
         this.avaliacoesRepository = avaliacoesRepository;
+        this.emailService = emailService;
+        this.usuarioRepository = usuarioRepository;
+        this.acordosRepository = acordosRepository;
     }
 
 
     public Prestador cadastrar(PrestadorDTO dto){
+        if (usuarioRepository.findByEmail(dto.email()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email já cadastrado.");
+        }
 
         Prestador prestador = new Prestador();
         prestador.setNome(dto.nome());
@@ -45,6 +59,10 @@ public class PrestadorService {
         prestador.setDataNascimento(dto.dataNascimento());
         prestador.setSenhaHash(passwordEncoder.encode(dto.senha()));
         prestador.setTelefone(dto.telefone());
+        prestador.setUserType(UserType.PRESTADOR);
+        prestador.setAtivo(false);
+        prestador.setEmailConfirmado(false);
+        prestador.setTokenConfirmacao(UUID.randomUUID().toString());
 
         Profissao profissao = profissaoRepository.findById(dto.profissaoId())
                 .orElseThrow(() -> new RuntimeException("Profissão não encontrada"));
@@ -57,6 +75,8 @@ public class PrestadorService {
         EstatisticasPrestador stats = new EstatisticasPrestador();
         stats.setPrestador(prestadorSalvo);
         estatisticasPrestadorRepository.save(stats);
+
+        emailService.enviarConfirmacao(prestadorSalvo.getEmail(), prestadorSalvo.getTokenConfirmacao());
 
         return prestadorSalvo;
     }
@@ -92,6 +112,19 @@ public class PrestadorService {
         }).orElseThrow(() -> new RuntimeException("Erro ao atualizar."));
     }
 
+    public void atualizarFoto(Long id, MultipartFile foto) throws IOException {
+        Prestador prestador = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prestador não encontrado"));
+
+        String nomeArquivo = UUID.randomUUID() + "_" + foto.getOriginalFilename();
+        Path caminho = Paths.get("uploads/" + nomeArquivo);
+        Files.createDirectories(caminho.getParent());
+        Files.write(caminho, foto.getBytes());
+
+        prestador.setFoto("/uploads/" + nomeArquivo);
+        repository.save(prestador);
+    }
+
 
     public void deletar(Long id){
 
@@ -105,23 +138,24 @@ public class PrestadorService {
 
 
     public EstatisticasPrestadorDTO buscarEstatisticas(Long prestadorId) {
-
         EstatisticasPrestador stats = estatisticasPrestadorRepository.findByPrestadorId(prestadorId)
-                .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas para o prestador " + prestadorId));
+                .orElseThrow(() -> new EntityNotFoundException("Estatísticas não encontradas"));
 
         Double ultimaNota = avaliacoesRepository
                 .findTopByPrestadorIdOrderByDataDesc(prestadorId)
                 .map(Avaliacoes::getNota)
                 .orElse(null);
 
-        long totalAvaliacoes = avaliacoesRepository.countByPrestadorId(prestadorId);
+        long totalAvaliacoes = avaliacoesRepository
+                .countByPrestadorIdAndAvaliadorTipo(prestadorId, UserType.CLIENTE);
+
+        BigDecimal precoMedio = acordosRepository
+                .calcularPrecoMedioPrestador(prestadorId);
 
         return new EstatisticasPrestadorDTO(
                 (int) totalAvaliacoes,
-                stats.getTrabalhosRealizados(),
                 stats.getTempoNoApp(),
-                stats.getRankingPosicao(),
-                stats.getPrecoMedio(),
+                precoMedio != null ? precoMedio : BigDecimal.ZERO,
                 stats.getExperienciaTrabalho(),
                 ultimaNota
         );
@@ -133,5 +167,7 @@ public class PrestadorService {
         stats.setExperienciaTrabalho(experiencia);
         estatisticasPrestadorRepository.save(stats);
     }
+
+
 
 }

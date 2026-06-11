@@ -7,6 +7,7 @@ import br.unipar.devbackend.fixr.dto.AnuncioRequestDTO;
 import br.unipar.devbackend.fixr.dto.AnuncioResponseDTO;
 import br.unipar.devbackend.fixr.model.Anuncios;
 import br.unipar.devbackend.fixr.model.Profissao;
+import br.unipar.devbackend.fixr.model.StatusAnuncio;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,13 @@ public class AnunciosService {
 
     public List<AnuncioResponseDTO> listar(){
         return repository.findAll().stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Transactional
+    public List<AnuncioResponseDTO> listarPublicados() {
+        return repository.findByStatusAnuncio(StatusAnuncio.PUBLICADO).stream()
                 .map(this::toDTO)
                 .toList();
     }

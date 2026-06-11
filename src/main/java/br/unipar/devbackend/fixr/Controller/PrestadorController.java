@@ -7,7 +7,9 @@ import br.unipar.devbackend.fixr.service.PrestadorService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +52,13 @@ public class PrestadorController {
     @GetMapping("/{id}/stats")
     public ResponseEntity<EstatisticasPrestadorDTO> getEstatisticas(@PathVariable Long id) {
         return ResponseEntity.ok(prestadorService.buscarEstatisticas(id));
+    }
+
+    @PatchMapping("/{id}/foto")
+    public ResponseEntity<Void> atualizarFoto(@PathVariable Long id,
+                                              @RequestParam("foto") MultipartFile foto) throws IOException {
+        prestadorService.atualizarFoto(id, foto);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/stats/experiencia")

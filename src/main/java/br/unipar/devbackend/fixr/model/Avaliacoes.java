@@ -28,4 +28,7 @@ public class Avaliacoes {
 
     private Boolean ativo = true;
 
+    @Enumerated(EnumType.STRING)
+    private UserType avaliadorTipo;
+
 }

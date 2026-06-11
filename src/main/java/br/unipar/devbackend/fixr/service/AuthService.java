@@ -31,7 +31,9 @@ public class AuthService {
     public LoginResponseDTO login(LoginRequestDTO dto){
 
         Optional<Cliente> clienteOpt = clienteRepository.findByEmail(dto.email());
+        System.out.println("cliente encontrado: " + clienteOpt.isPresent());
         if (clienteOpt.isPresent()) {
+            System.out.println("user_type do cliente: " + clienteOpt.get().getUserType());
             Cliente cliente = clienteOpt.get();
             cliente.setOnline(true);
             clienteRepository.save(cliente);
@@ -43,6 +45,8 @@ public class AuthService {
         }
 
         Optional<Prestador> prestadorOpt = prestadorRepository.findByEmail(dto.email());
+        System.out.println("prestador encontrado: " + prestadorOpt.isPresent());
+
         if (prestadorOpt.isPresent()) {
             Prestador prestador = prestadorOpt.get();
             prestador.setOnline(true);
@@ -62,11 +66,10 @@ public class AuthService {
 
     private LoginResponseDTO autenticar(Boolean ativo, String senhaBanco,
                                         String senhaDigitada, Long id,
-                                        String nome, String email, String tipo){
-
+                                        String nome, String email, String tipo) {
         if (!ativo) {
             throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "Usuário inativo"
+                    HttpStatus.FORBIDDEN, "Confirme seu email antes de fazer login."
             );
         }
 
@@ -77,7 +80,6 @@ public class AuthService {
         }
 
         return new LoginResponseDTO(id, nome, email, tipo);
-
     }
 
 }
