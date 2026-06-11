@@ -35,6 +35,7 @@ public class FavoritosService {
         return favoritosRepository.findByUsuarioId(usuarioId)
                 .stream()
                 .map(Favoritos::getFavoritado)
+                .filter(u -> u != null && u.getAtivo()) // ← adicione o filtro
                 .collect(Collectors.toList());
     }
 }
