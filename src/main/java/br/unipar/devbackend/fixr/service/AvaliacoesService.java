@@ -7,12 +7,14 @@ import br.unipar.devbackend.fixr.dto.AvaliacoesDTO;
 import br.unipar.devbackend.fixr.model.Avaliacoes;
 import br.unipar.devbackend.fixr.model.Cliente;
 import br.unipar.devbackend.fixr.model.Prestador;
+import br.unipar.devbackend.fixr.model.UserType;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AvaliacoesService {
@@ -29,17 +31,24 @@ public class AvaliacoesService {
     }
 
     @PostMapping
-    public Avaliacoes cadastrar(AvaliacoesDTO avaliacoesDTO){
-        Avaliacoes avaliacoes = new Avaliacoes();
-        avaliacoes.setNota(avaliacoesDTO.nota());
-        avaliacoes.setComentario(avaliacoesDTO.comentario());
-        avaliacoes.setSugest_melhoria(avaliacoesDTO.sugest_melhoria());
+    public Avaliacoes cadastrar(AvaliacoesDTO dto) {
+        // verifica se já existe avaliação
+        Optional<Avaliacoes> existente = repository.findByClienteIdAndPrestadorIdAndAvaliadorTipo(
+                dto.idCliente(), dto.idPrestador(), dto.avaliadorTipo()
+        );
 
-        Cliente cliente = clienteRepository.getReferenceById(avaliacoesDTO.idCliente());
-        avaliacoes.setCliente(cliente);
+        Avaliacoes avaliacoes = existente.orElse(new Avaliacoes());
 
-        Prestador prestador = prestadorRepository.getReferenceById(avaliacoesDTO.idPrestador());
-        avaliacoes.setPrestador(prestador);
+        avaliacoes.setNota(dto.nota());
+        avaliacoes.setComentario(dto.comentario());
+        avaliacoes.setSugest_melhoria(dto.sugest_melhoria());
+        avaliacoes.setAvaliadorTipo(dto.avaliadorTipo());
+
+        if (existente.isEmpty()) {
+            // só seta cliente e prestador na criação
+            avaliacoes.setCliente(clienteRepository.getReferenceById(dto.idCliente()));
+            avaliacoes.setPrestador(prestadorRepository.getReferenceById(dto.idPrestador()));
+        }
 
         return repository.save(avaliacoes);
     }
@@ -53,11 +62,11 @@ public class AvaliacoesService {
     }
 
     public List<Avaliacoes> listarPorPrestador(Long id) {
-        return repository.findByPrestadorId(id);
+        return repository.findByPrestadorIdAndAvaliadorTipo(id, UserType.CLIENTE);
     }
 
     public List<Avaliacoes> listarPorCliente(Long id) {
-        return repository.findByClienteId(id);
+        return repository.findByClienteIdAndAvaliadorTipo(id, UserType.PRESTADOR);
     }
 
     public Avaliacoes atualizar(Long id, AvaliacoesDTO avaliacoesDTOatualizado){

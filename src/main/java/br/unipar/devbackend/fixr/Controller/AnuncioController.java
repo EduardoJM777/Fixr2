@@ -46,6 +46,12 @@ public class AnuncioController {
         return anuncioservice.buscarPorIdDTO(id);
     }
 
+    @GetMapping("/publicados")
+    public List<AnuncioResponseDTO> listarPublicados() {
+        return anuncioservice.listarPublicados();
+    }
+
+
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id){
         anuncioservice.deletar(id);

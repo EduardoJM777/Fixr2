@@ -36,10 +36,14 @@ public abstract class Usuario {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    private Boolean ativo = true;
+    private Boolean ativo = false;
 
     private String foto;
 
     private Boolean online;
+
+    private String tokenConfirmacao;
+
+    private Boolean emailConfirmado = false;
 
 }

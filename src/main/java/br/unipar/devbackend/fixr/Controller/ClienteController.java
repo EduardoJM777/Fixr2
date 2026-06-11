@@ -7,7 +7,9 @@ import br.unipar.devbackend.fixr.service.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -29,6 +31,13 @@ public class ClienteController {
     @PutMapping("/{id}")
     public Cliente atualizar(@PathVariable Long id, @Valid @RequestBody ClienteDTO clienteDTO){
         return clienteService.atualizar(id, clienteDTO);
+    }
+
+    @PatchMapping("/{id}/foto")
+    public ResponseEntity<Void> atualizarFoto(@PathVariable Long id,
+                                              @RequestParam("foto") MultipartFile foto) throws IOException {
+        clienteService.atualizarFoto(id, foto);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
